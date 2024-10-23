@@ -1,5 +1,6 @@
 import readline from 'node:readline'
 import fs from 'node:fs'
+import allTasks from './tasks.json' assert {type: "json"};
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -7,6 +8,7 @@ const rl = readline.createInterface({
 })
 
 const STATUS = [ 'todo', 'in-progress', 'done' ];
+console.log('allTasks', allTasks)
 
 rl.question('What do you want to do ? ', action => {
     if (action === 'add') {
@@ -20,7 +22,7 @@ rl.question('What do you want to do ? ', action => {
                 console.log('You have to give a task')
                 rl.close();
             }else {
-                fs.writeFile('./tasks.json', JSON.stringify(TASK_TO_ADD) ,err => {
+                fs.writeFile('./tasks.json', JSON.stringify( [...allTasks, TASK_TO_ADD] ) ,err => {
                     if (err) {
                         console.error(err);
                     } else {
@@ -32,6 +34,8 @@ rl.question('What do you want to do ? ', action => {
             }
         })
 
+    } else {
+        rl.close()
     }
     // rl.close()
 })
