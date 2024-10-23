@@ -8,21 +8,35 @@ const rl = readline.createInterface({
 })
 
 const STATUS = [ 'todo', 'in-progress', 'done' ];
-console.log('allTasks', allTasks)
+let lastTask;
+let taskToAdd = {};
+if(allTasks) {
+    lastTask = allTasks.slice(-1).map(e => JSON.parse(e.id))
+} 
 
 rl.question('What do you want to do ? ', action => {
     if (action === 'add') {
         rl.question('Task to add : ', task => {
-            const TASK_TO_ADD = {
-                id: 1,
-                description: task,
-                status: STATUS[0]
+            if(lastTask) {
+                taskToAdd = {
+                    id: lastTask++,
+                    description: task,
+                    status: STATUS[0]
+            }  
+            console.log('in if') 
+            }else {
+                taskToAdd = {
+                    id: 1,
+                    description: task,
+                    status: STATUS[0]
             }
+            }
+            
             if(!task) {
                 console.log('You have to give a task')
                 rl.close();
             }else {
-                fs.writeFile('./tasks.json', JSON.stringify( [...allTasks, TASK_TO_ADD] ) ,err => {
+                fs.writeFile('./tasks.json', JSON.stringify( [...allTasks, taskToAdd] ) ,err => {
                     if (err) {
                         console.error(err);
                     } else {
