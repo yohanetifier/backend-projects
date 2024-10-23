@@ -6,21 +6,32 @@ const rl = readline.createInterface({
     output: process.stdout
 })
 
-// Read the Arg
-// process.argv.forEach((val, index) => {
-//     console.log('val', val)
-// })
+const STATUS = [ 'todo', 'in-progress', 'done' ];
 
 rl.question('What do you want to do ? ', action => {
     if (action === 'add') {
-        fs.writeFile('./tasks.json', action ,err => {
-            if (err) {
-                console.error(err);
-            } else {
-                action
+        rl.question('Task to add : ', task => {
+            const TASK_TO_ADD = {
+                id: 1,
+                description: task,
+                status: STATUS[0]
+            }
+            if(!task) {
+                console.log('You have to give a task')
+                rl.close();
+            }else {
+                fs.writeFile('./tasks.json', JSON.stringify(TASK_TO_ADD) ,err => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        task
+                        console.log('Task added successfully ')
+                    }
+                })
+                rl.close()
             }
         })
 
     }
-    rl.close()
+    // rl.close()
 })
