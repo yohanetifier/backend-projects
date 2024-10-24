@@ -1,9 +1,6 @@
 [
 	{ "id": 1, "description": "add", "status": "todo" },
-	{ "id": 2, "description": "buy", "status": "todo" },
-	{ "id": 3, "description": "sport", "status": "todo" },
-	{ "id": 4, "description": "Grocery", "status": "todo" },
-	{ "id": 5, "description": "buy", "status": "todo" },
-	{ "id": 6, "description": "cool", "status": "todo" },
-	{ "id": 7, "description": "bbbbb", "status": "todo" }
+	{ "id": 2, "description": "gooooooo", "status": "todo" },
+	{ "id": 3, "description": "go to the sport", "status": "todo" },
+	{ "id": 4, "description": "go to the supermarket", "status": "todo" }
 ]

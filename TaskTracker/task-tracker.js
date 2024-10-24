@@ -65,19 +65,48 @@ rl.question('What do you want to do ? ', (action) => {
 		});
 	} else if (action === 'update') {
 		rl.question('Which task you want to update : ', (id) => {
-			console.log('id', typeof id);
-			let filterTaskArray = allTasks.filter((t) => t.id === parseInt(id));
-			const taskToUpdate = filterTaskArray.map((t) => ({
-				...t,
-				description: 'new desc'
-			}));
-			console.log('taskToUpdate', taskToUpdate);
-			const allNewTasks = allTasks.map((t) => ({
-				...t,
-				taskToUpdate
-			}));
-			console.log('allNewTasks', allNewTasks);
-			rl.close();
+			if (!id) {
+				console.log('Id needed !');
+				rl.close();
+			} else {
+				rl.question(
+					'What is the new description : ',
+					(newDescription) => {
+						if (!newDescription) {
+							console.log('NewDescription needed !');
+						} else {
+							const shallowCopy = allTasks.slice();
+							let filterTaskArray = shallowCopy.filter(
+								(t) => t.id === parseInt(id)
+							);
+							const taskToUpdate = filterTaskArray.map((t) => ({
+								...t,
+								description: newDescription
+							}));
+							const indexOfTheTaskToUpdate = allTasks.findIndex(
+								(task) => task.id === parseInt(id)
+							);
+							if (indexOfTheTaskToUpdate !== -1) {
+								shallowCopy[indexOfTheTaskToUpdate] =
+									taskToUpdate[0];
+							}
+
+							fs.writeFile(
+								'./tasks.json',
+								JSON.stringify(shallowCopy),
+								(err) => {
+									if (err) {
+										console.log(err);
+									} else {
+										console.log(`Tasks ${id} updated`);
+									}
+								}
+							);
+							rl.close();
+						}
+					}
+				);
+			}
 		});
 	} else {
 		console.log('allow action add | update | delete');
