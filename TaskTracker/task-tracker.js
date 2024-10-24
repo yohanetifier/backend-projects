@@ -66,8 +66,17 @@ rl.question('What do you want to do ? ', (action) => {
 	} else if (action === 'update') {
 		rl.question('Which task you want to update : ', (id) => {
 			console.log('id', typeof id);
-			let taskToUpdate = allTasks.filter((t) => t.id === parseInt(id));
+			let filterTaskArray = allTasks.filter((t) => t.id === parseInt(id));
+			const taskToUpdate = filterTaskArray.map((t) => ({
+				...t,
+				description: 'new desc'
+			}));
 			console.log('taskToUpdate', taskToUpdate);
+			const allNewTasks = allTasks.map((t) => ({
+				...t,
+				taskToUpdate
+			}));
+			console.log('allNewTasks', allNewTasks);
 			rl.close();
 		});
 	} else {
