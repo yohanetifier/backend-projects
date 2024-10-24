@@ -36,13 +36,17 @@ const addTask = (task) => {
 		taskToAdd = {
 			id: lastTaskParse,
 			description: task,
-			status: STATUS[0]
+			status: STATUS[0],
+			createdAt: new Date(),
+			updatedAt: null
 		};
 	} else {
 		taskToAdd = {
 			id: 1,
 			description: task,
-			status: STATUS[0]
+			status: STATUS[0],
+			createdAt: new Date(),
+			updatedAt: null
 		};
 	}
 
@@ -107,6 +111,25 @@ rl.question('What do you want to do ? ', (action) => {
 					}
 				);
 			}
+		});
+	} else if (action === 'delete') {
+		rl.question('Which tasks do you want to delete: ', (deletedTasksId) => {
+			const shallowCopy = allTasks.slice();
+			const othersTasks = shallowCopy.filter(
+				(task) => task.id !== parseInt(deletedTasksId)
+			);
+			fs.writeFile(
+				'./tasks.json',
+				JSON.stringify([...othersTasks]),
+				(err) => {
+					if (err) {
+						console.log(err);
+					} else {
+						console.log(`Tasks ${deletedTasksId} deleted !`);
+						rl.close();
+					}
+				}
+			);
 		});
 	} else {
 		console.log('allow action add | update | delete');
