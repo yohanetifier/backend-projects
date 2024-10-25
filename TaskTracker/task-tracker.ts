@@ -129,6 +129,25 @@ const updateTasksById = (newDescription: string, id: string) => {
 	}
 };
 
+const deleteTaskById = (deletedTasksId: string) => {
+	const shallowCopy = allTasks.slice();
+	const othersTasks = shallowCopy.filter(
+		(task: any) => task.id !== parseInt(deletedTasksId)
+	);
+	fs.writeFile(
+		'./tasks.json',
+		JSON.stringify([...othersTasks]),
+		(err: any) => {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log(`Tasks ${deletedTasksId} deleted !`);
+				rl.close();
+			}
+		}
+	);
+};
+
 rl.question('What do you want to do ? ', (action: string) => {
 	if (!action) {
 		console.log('the action can be add | update | delete');
@@ -156,22 +175,7 @@ rl.question('What do you want to do ? ', (action: string) => {
 		rl.question(
 			'Which tasks do you want to delete: ',
 			(deletedTasksId: string) => {
-				const shallowCopy = allTasks.slice();
-				const othersTasks = shallowCopy.filter(
-					(task: any) => task.id !== parseInt(deletedTasksId)
-				);
-				fs.writeFile(
-					'./tasks.json',
-					JSON.stringify([...othersTasks]),
-					(err: any) => {
-						if (err) {
-							console.log(err);
-						} else {
-							console.log(`Tasks ${deletedTasksId} deleted !`);
-							rl.close();
-						}
-					}
-				);
+				deleteTaskById(deletedTasksId);
 			}
 		);
 	} else {
