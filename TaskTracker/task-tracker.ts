@@ -21,7 +21,11 @@ type Action = 'add' | 'update' | 'delete';
 const STATUS = ['todo', 'in-progress', 'done'];
 const dateOfTheDay = format(new Date(), 'MM/dd/yyyy');
 
-const writeInfiles = (withAllTasks: boolean, content: Task | Task[]) => {
+const writeInfiles = (
+	withAllTasks: boolean,
+	content: Task | Task[],
+	id?: string
+) => {
 	if (withAllTasks === true) {
 		fs.writeFile(
 			'./tasks.json',
@@ -39,7 +43,7 @@ const writeInfiles = (withAllTasks: boolean, content: Task | Task[]) => {
 			if (err) {
 				console.error(err);
 			} else {
-				console.log('Task added successfully ');
+				console.log(`Task ${id} updated successfully`);
 			}
 		});
 	}
@@ -75,25 +79,6 @@ const addTask = (description: string) => {
 				updatedAt: null
 			};
 		}
-		// if (lastTaskId) {
-		// 	let lastTaskParse = JSON.parse(lastTaskId);
-		// 	lastTaskParse++;
-		// 	taskToAdd = {
-		// 		id: lastTaskParse,
-		// 		description,
-		// 		status: STATUS[0],
-		// 		createdAt: new Date(),
-		// 		updatedAt: null
-		// 	};
-		// } else {
-		// 	taskToAdd = {
-		// 		id: 1,
-		// 		description,
-		// 		status: STATUS[0],
-		// 		createdAt: new Date(),
-		// 		updatedAt: null
-		// 	};
-		// }
 		writeInfiles(true, taskToAdd);
 	}
 };
@@ -101,14 +86,14 @@ const addTask = (description: string) => {
 const updateTasksById = (newDescription: string, id: string) => {
 	if (!newDescription) {
 		console.log('NewDescription needed !');
-	} else {
+	} else if (newDescription === 'in-progress' || newDescription === 'done') {
 		const shallowCopy = allTasks.slice();
 		let filterTaskArray = shallowCopy.filter(
 			(t: any) => t.id === parseInt(id)
 		);
 		const taskToUpdate = filterTaskArray.map((t: any) => ({
 			...t,
-			description: newDescription,
+			status: newDescription,
 			updatedAt: dateOfTheDay
 		}));
 		const indexOfTheTaskToUpdate = allTasks.findIndex(
@@ -117,16 +102,42 @@ const updateTasksById = (newDescription: string, id: string) => {
 		if (indexOfTheTaskToUpdate !== -1) {
 			shallowCopy[indexOfTheTaskToUpdate] = taskToUpdate[0];
 		}
-		writeInfiles(false, shallowCopy as unknown as Task[]);
-		fs.writeFile('./tasks.json', JSON.stringify(shallowCopy), (err) => {
-			if (err) {
-				console.log(err);
-			} else {
-				console.log(`Tasks ${id} updated`);
-			}
-		});
+		writeInfiles(false, shallowCopy as unknown as Task[], id);
+		// fs.writeFile('./tasks.json', JSON.stringify(shallowCopy), (err) => {
+		// 	if (err) {
+		// 		console.log(err);
+		// 	} else {
+		// 		console.log(`Tasks ${id} updated`);
+		// 	}
+		// });
 		rl.close();
 	}
+	// } else  {
+	// const shallowCopy = allTasks.slice();
+	// let filterTaskArray = shallowCopy.filter(
+	// 	(t: any) => t.id === parseInt(id)
+	// );
+	// const taskToUpdate = filterTaskArray.map((t: any) => ({
+	// 	...t,
+	// 	description: newDescription,
+	// 	updatedAt: dateOfTheDay
+	// }));
+	// const indexOfTheTaskToUpdate = allTasks.findIndex(
+	// 	(task: any) => task.id === parseInt(id)
+	// );
+	// if (indexOfTheTaskToUpdate !== -1) {
+	// 	shallowCopy[indexOfTheTaskToUpdate] = taskToUpdate[0];
+	// }
+	// writeInfiles(false, shallowCopy as unknown as Task[]);
+	// 	fs.writeFile('./tasks.json', JSON.stringify(shallowCopy), (err) => {
+	// 		if (err) {
+	// 			console.log(err);
+	// 		} else {
+	// 			console.log(`Tasks ${id} updated`);
+	// 		}
+	// 	});
+	// 	rl.close();
+	// }
 };
 
 const deleteTaskById = (deletedTasksId: string) => {
@@ -164,9 +175,19 @@ rl.question('What do you want to do ? ', (action: string) => {
 				rl.close();
 			} else {
 				rl.question(
-					'What is the new description : ',
-					(newDescription: string) => {
-						updateTasksById(newDescription, id);
+					'What do you want to update (status | description) : ',
+					(choice: string) => {
+						if (choice === 'status') {
+							rl.question(
+								'Which status (in-progress | done) : ',
+								(status) => {
+									updateTasksById(status, id);
+									rl.close();
+								}
+							);
+						} else {
+						}
+						// updateTasksById(newDescription, id);
 					}
 				);
 			}
@@ -178,6 +199,8 @@ rl.question('What do you want to do ? ', (action: string) => {
 				deleteTaskById(deletedTasksId);
 			}
 		);
+	} else if (action === 'mark-in-progress') {
+		rl.question('Which task do you want to mark in progress', (id) => {});
 	} else {
 		console.log('allow action add | update | delete');
 		rl.close();
