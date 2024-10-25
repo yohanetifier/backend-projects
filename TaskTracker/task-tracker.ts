@@ -84,35 +84,37 @@ const addTask = (description: string) => {
 };
 
 const updateTasksById = (newDescription: string, id: string) => {
+	let taskToUpdate;
 	if (!newDescription) {
 		console.log('NewDescription needed !');
-	} else if (newDescription === 'in-progress' || newDescription === 'done') {
-		const shallowCopy = allTasks.slice();
-		let filterTaskArray = shallowCopy.filter(
-			(t: any) => t.id === parseInt(id)
-		);
-		const taskToUpdate = filterTaskArray.map((t: any) => ({
+	}
+	const shallowCopy = allTasks.slice();
+	let filterTaskArray = shallowCopy.filter((t: any) => t.id === parseInt(id));
+
+	if (newDescription === 'in-progress' || newDescription === 'done') {
+		taskToUpdate = filterTaskArray.map((t: any) => ({
 			...t,
 			status: newDescription,
 			updatedAt: dateOfTheDay
 		}));
-		const indexOfTheTaskToUpdate = allTasks.findIndex(
-			(task: any) => task.id === parseInt(id)
-		);
-		if (indexOfTheTaskToUpdate !== -1) {
-			shallowCopy[indexOfTheTaskToUpdate] = taskToUpdate[0];
-		}
-		writeInfiles(false, shallowCopy as unknown as Task[], id);
-		// fs.writeFile('./tasks.json', JSON.stringify(shallowCopy), (err) => {
-		// 	if (err) {
-		// 		console.log(err);
-		// 	} else {
-		// 		console.log(`Tasks ${id} updated`);
-		// 	}
-		// });
-		rl.close();
+	} else {
+		taskToUpdate = filterTaskArray.map((t: any) => ({
+			...t,
+			description: newDescription,
+			updatedAt: dateOfTheDay
+		}));
 	}
-	// } else  {
+
+	const indexOfTheTaskToUpdate = allTasks.findIndex(
+		(task: any) => task.id === parseInt(id)
+	);
+
+	if (indexOfTheTaskToUpdate !== -1) {
+		shallowCopy[indexOfTheTaskToUpdate] = taskToUpdate[0];
+	}
+	writeInfiles(false, shallowCopy as unknown as Task[], id);
+	rl.close();
+
 	// const shallowCopy = allTasks.slice();
 	// let filterTaskArray = shallowCopy.filter(
 	// 	(t: any) => t.id === parseInt(id)
@@ -137,8 +139,9 @@ const updateTasksById = (newDescription: string, id: string) => {
 	// 		}
 	// 	});
 	// 	rl.close();
-	// }
 };
+// } else  {
+// }
 
 const deleteTaskById = (deletedTasksId: string) => {
 	const shallowCopy = allTasks.slice();
@@ -159,51 +162,61 @@ const deleteTaskById = (deletedTasksId: string) => {
 	);
 };
 
-rl.question('What do you want to do ? ', (action: string) => {
-	if (!action) {
-		console.log('the action can be add | update | delete');
-		rl.close();
-	}
-	if (action === 'add') {
-		rl.question('Task to add : ', (task: string) => {
-			addTask(task);
-		});
-	} else if (action === 'update') {
-		rl.question('Which task you want to update : ', (id: string) => {
-			if (!id) {
-				console.log('Id needed !');
-				rl.close();
-			} else {
-				rl.question(
-					'What do you want to update (status | description) : ',
-					(choice: string) => {
-						if (choice === 'status') {
-							rl.question(
-								'Which status (in-progress | done) : ',
-								(status) => {
-									updateTasksById(status, id);
-									rl.close();
-								}
-							);
-						} else {
+rl.question(
+	'What do you want to do (add | update | delete | list)? ',
+	(action: string) => {
+		if (!action) {
+			console.log('the action can be add | update | delete');
+			rl.close();
+		}
+		if (action === 'add') {
+			rl.question('Task to add : ', (task: string) => {
+				addTask(task);
+			});
+		} else if (action === 'update') {
+			rl.question('Which task you want to update : ', (id: string) => {
+				if (!id) {
+					console.log('Id needed !');
+					rl.close();
+				} else {
+					rl.question(
+						'What do you want to update (status | description) : ',
+						(choice: string) => {
+							if (choice === 'status') {
+								rl.question(
+									'Which status (in-progress | done) : ',
+									(status) => {
+										updateTasksById(status, id);
+										rl.close();
+									}
+								);
+							} else {
+								rl.question(
+									'New description : ',
+									(description) => {
+										updateTasksById(description, id);
+										rl.close();
+									}
+								);
+							}
+							// updateTasksById(newDescription, id);
 						}
-						// updateTasksById(newDescription, id);
-					}
-				);
-			}
-		});
-	} else if (action === 'delete') {
-		rl.question(
-			'Which tasks do you want to delete: ',
-			(deletedTasksId: string) => {
-				deleteTaskById(deletedTasksId);
-			}
-		);
-	} else if (action === 'mark-in-progress') {
-		rl.question('Which task do you want to mark in progress', (id) => {});
-	} else {
-		console.log('allow action add | update | delete');
-		rl.close();
+					);
+				}
+			});
+		} else if (action === 'delete') {
+			rl.question(
+				'Which tasks do you want to delete: ',
+				(deletedTasksId: string) => {
+					deleteTaskById(deletedTasksId);
+				}
+			);
+		} else if (action === 'list') {
+			console.log(allTasks);
+			rl.close();
+		} else {
+			console.log('allow action add | update | delete | list');
+			rl.close();
+		}
 	}
-	// rl.close()
-});
+);
