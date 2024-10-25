@@ -1,12 +1,5 @@
 [
 	{
-		"id": 1,
-		"description": "chess game",
-		"status": "todo",
-		"createdAt": "2024-10-25T09:34:45.400Z",
-		"updatedAt": "10/25/2024"
-	},
-	{
 		"id": 2,
 		"description": "reading",
 		"status": "done",
@@ -15,16 +8,9 @@
 	},
 	{
 		"id": 3,
-		"description": "workout",
-		"status": "done",
+		"description": "testing",
+		"status": "in-progress",
 		"createdAt": "10/25/2024",
 		"updatedAt": "10/25/2024"
-	},
-	{
-		"id": 4,
-		"description": "Dancing",
-		"status": "todo",
-		"createdAt": "10/25/2024",
-		"updatedAt": null
 	}
 ]
