@@ -1,6 +1,7 @@
 import readline from 'node:readline';
 import fs from 'node:fs';
 import allTasks from './tasks.json' assert { type: 'json' };
+import { format } from 'date-fns';
 
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -11,13 +12,14 @@ type Task = {
 	id: number;
 	description: string;
 	status: string;
-	createdAt?: Date;
-	updatedAt?: Date | null;
+	createdAt?: string;
+	updatedAt?: string | null;
 };
 
 type Action = 'add' | 'update' | 'delete';
 
 const STATUS = ['todo', 'in-progress', 'done'];
+const dateOfTheDay = format(new Date(), 'MM/dd/yyyy');
 
 const writeInfiles = (withAllTasks: boolean, content: Task | Task[]) => {
 	if (withAllTasks === true) {
@@ -45,37 +47,53 @@ const writeInfiles = (withAllTasks: boolean, content: Task | Task[]) => {
 	rl.close();
 };
 
-const addTask = (task: string) => {
-	let lastTaskId: any;
+const addTask = (description: string) => {
+	let lastTaskId: string | any;
 	let taskToAdd: Task;
 
-	if (!task) {
+	if (!description) {
 		console.log('You have to give a task');
 		rl.close();
 	} else {
 		if (allTasks) {
 			lastTaskId = allTasks.slice(-1).map((e: any) => e.id);
-		}
-		if (lastTaskId) {
 			let lastTaskParse = JSON.parse(lastTaskId);
-			console.log('lastTaskParse', lastTaskParse);
 			lastTaskParse++;
 			taskToAdd = {
 				id: lastTaskParse,
-				description: task,
+				description,
 				status: STATUS[0],
-				createdAt: new Date(),
+				createdAt: dateOfTheDay,
 				updatedAt: null
 			};
 		} else {
 			taskToAdd = {
 				id: 1,
-				description: task,
+				description,
 				status: STATUS[0],
-				createdAt: new Date(),
+				createdAt: dateOfTheDay,
 				updatedAt: null
 			};
 		}
+		// if (lastTaskId) {
+		// 	let lastTaskParse = JSON.parse(lastTaskId);
+		// 	lastTaskParse++;
+		// 	taskToAdd = {
+		// 		id: lastTaskParse,
+		// 		description,
+		// 		status: STATUS[0],
+		// 		createdAt: new Date(),
+		// 		updatedAt: null
+		// 	};
+		// } else {
+		// 	taskToAdd = {
+		// 		id: 1,
+		// 		description,
+		// 		status: STATUS[0],
+		// 		createdAt: new Date(),
+		// 		updatedAt: null
+		// 	};
+		// }
 		writeInfiles(true, taskToAdd);
 	}
 };
@@ -90,7 +108,8 @@ const updateTasksById = (newDescription: string, id: string) => {
 		);
 		const taskToUpdate = filterTaskArray.map((t: any) => ({
 			...t,
-			description: newDescription
+			description: newDescription,
+			updatedAt: dateOfTheDay
 		}));
 		const indexOfTheTaskToUpdate = allTasks.findIndex(
 			(task: any) => task.id === parseInt(id)

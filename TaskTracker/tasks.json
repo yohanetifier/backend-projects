@@ -1,44 +1,16 @@
 [
 	{
 		"id": 1,
-		"description": "todo",
+		"description": "good",
 		"status": "todo",
 		"createdAt": "2024-10-25T09:34:45.400Z",
-		"updatedAt": null
+		"updatedAt": "10/25/2024"
 	},
 	{
 		"id": 2,
-		"description": "eat",
+		"description": "reading",
 		"status": "todo",
-		"createdAt": "2024-10-25T09:56:38.381Z",
-		"updatedAt": null
-	},
-	{
-		"id": 3,
-		"description": "footing",
-		"status": "todo",
-		"createdAt": "2024-10-25T09:56:47.235Z",
-		"updatedAt": null
-	},
-	{
-		"id": 4,
-		"description": "give me something",
-		"status": "todo",
-		"createdAt": "2024-10-25T10:04:01.329Z",
-		"updatedAt": null
-	},
-	{
-		"id": 5,
-		"description": "give me real",
-		"status": "todo",
-		"createdAt": "2024-10-25T10:05:37.974Z",
-		"updatedAt": null
-	},
-	{
-		"id": 6,
-		"description": "whast happen",
-		"status": "todo",
-		"createdAt": "2024-10-25T10:06:17.700Z",
+		"createdAt": "10/25/2024",
 		"updatedAt": null
 	}
 ]
