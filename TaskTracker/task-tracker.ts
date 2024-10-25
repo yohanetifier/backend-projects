@@ -8,17 +8,18 @@ const rl = readline.createInterface({
 	output: process.stdout
 });
 
+type STATUS = 'todo' | 'in-progress' | 'done';
+
 type Task = {
 	id: number;
 	description: string;
-	status: string;
+	status: STATUS;
 	createdAt?: string;
 	updatedAt?: string | null;
 };
 
 type Action = 'add' | 'update' | 'delete';
 
-const STATUS = ['todo', 'in-progress', 'done'];
 const dateOfTheDay = format(new Date(), 'MM/dd/yyyy');
 
 const writeInfiles = (
@@ -66,7 +67,7 @@ const addTask = (description: string) => {
 			taskToAdd = {
 				id: lastTaskParse,
 				description,
-				status: STATUS[0],
+				status: 'todo',
 				createdAt: dateOfTheDay,
 				updatedAt: null
 			};
@@ -74,7 +75,7 @@ const addTask = (description: string) => {
 			taskToAdd = {
 				id: 1,
 				description,
-				status: STATUS[0],
+				status: 'todo',
 				createdAt: dateOfTheDay,
 				updatedAt: null
 			};
