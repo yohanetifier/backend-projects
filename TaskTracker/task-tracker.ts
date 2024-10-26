@@ -138,25 +138,34 @@ const deleteTaskById = (deletedTasksId: string) => {
 	);
 };
 
-const retrieveTaskByStatus = (status: STATUS) => {
-	if (status === status) {
+const retrieveTaskByStatus = (status?: STATUS) => {
+	if (status) {
 		const tasksByStatus = allTasks.filter((task) => task.status === status);
-		console.log('tasks', tasksByStatus);
+		if (!tasksByStatus.length) {
+			console.log('No tasks found');
+		}else {
+			console.log(`Tasks ${status} : `, tasksByStatus)
+		}
 		process.exit(0);
 	}
 };
 
 if (action[2] === 'add') {
 	addTask(process.argv[3]);
-	// process.exit(0);
 } else if (action[2] === 'update') {
 	updateTasksById(process.argv[3], process.argv[4]);
 } else if (action[2] === 'delete') {
 	deleteTaskById(process.argv[3]);
 } else if (action[2] === 'mark-in-progress' || action[2] === 'mark-done') {
 	updateTasksById(process.argv[3]);
-} else if (action[2] === 'list' && action[3] === 'done') {
+} else if (
+	process.argv.includes('done') ||
+	process.argv.includes('todo') ||
+	process.argv.includes('in-progress')
+) {
 	retrieveTaskByStatus(process.argv[3] as unknown as STATUS);
+} else {
+	console.log('list', allTasks);
 }
 //  else if (action[2] === 'list' && action[3] === '') {
 // 	console.log(allTasks);
