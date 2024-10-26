@@ -143,8 +143,8 @@ const retrieveTaskByStatus = (status?: STATUS) => {
 		const tasksByStatus = allTasks.filter((task) => task.status === status);
 		if (!tasksByStatus.length) {
 			console.log('No tasks found');
-		}else {
-			console.log(`Tasks ${status} : `, tasksByStatus)
+		} else {
+			console.log(`Tasks ${status} : `, tasksByStatus);
 		}
 		process.exit(0);
 	}
@@ -165,6 +165,10 @@ if (action[2] === 'add') {
 ) {
 	retrieveTaskByStatus(process.argv[3] as unknown as STATUS);
 } else {
+	// const [, , cmd, ...args] = process.argv;
+	// console.log('process.argv', process.argv);
+	// console.log('args', args);
+	// console.log('cmd', cmd);
 	console.log('list', allTasks);
 }
 //  else if (action[2] === 'list' && action[3] === '') {
