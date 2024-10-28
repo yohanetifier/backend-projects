@@ -30,29 +30,24 @@ export const writeInFiles = async (
 	content: Task | Task[],
 	id?: string
 ) => {
-	if (withAllTasks === true) {
-		fs.writeFile(
-			'./tasks.json',
-			JSON.stringify([...allTasks, content]),
-			(err: any) => {
-				if (err) {
-					console.error(err);
-				} else {
-					console.log('Task added successfully ');
-					process.exit(0);
-				}
-			}
-		);
-	} else {
-		fs.writeFile('./tasks.json', JSON.stringify(content), (err: any) => {
+	fs.writeFile(
+		'./tasks.json',
+		withAllTasks
+			? JSON.stringify([...allTasks, content])
+			: JSON.stringify(content),
+		(err: any) => {
 			if (err) {
 				console.error(err);
 			} else {
-				console.log(`Task ${id} updated successfully`);
+				console.log(
+					withAllTasks
+						? `Task ${id} added successfully `
+						: `Tasks added successfully`
+				);
 				process.exit(0);
 			}
-		});
-	}
+		}
+	);
 };
 
 const addTask = (description: string) => {
@@ -72,7 +67,7 @@ const addTask = (description: string) => {
 			createdAt: dateOfTheDay,
 			updatedAt: null
 		};
-		writeInFiles(true, taskToAdd);
+		writeInFiles(true, taskToAdd, taskToAdd.id?.toString());
 	}
 };
 

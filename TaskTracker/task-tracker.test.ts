@@ -5,7 +5,6 @@ describe('WriteInFiles function', () => {
 	it('should write the files with the same content', async () => {
 		console.log('allTasks.length', allTasks.length);
 		await writeInFiles(true, { id: 99, description: 'testing purpose' });
-		const updatedTask = require('./tasks.json');
-		expect(updatedTask.length).toBe(updatedTask.length + 1);
+		expect(allTasks.length).toBe(allTasks.length + 1);
 	});
 });
