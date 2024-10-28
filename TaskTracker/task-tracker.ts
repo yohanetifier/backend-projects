@@ -3,7 +3,7 @@
 import readline from 'node:readline';
 import fs from 'node:fs';
 // import allTasks from './tasks.json' assert { type: 'json' };
-const allTasks = require('./tasks.json');
+import allTasks from './tasks.json';
 import { format } from 'date-fns';
 
 const rl = readline.createInterface({
@@ -32,6 +32,7 @@ export const writeInFiles = async (
 ) => {
 	fs.writeFile(
 		'./tasks.json',
+
 		withAllTasks
 			? JSON.stringify([...allTasks, content])
 			: JSON.stringify(content),
@@ -44,13 +45,13 @@ export const writeInFiles = async (
 						? `Task ${id} added successfully `
 						: `Tasks added successfully`
 				);
-				process.exit(0);
+				process.exit(1);
 			}
 		}
 	);
 };
 
-const addTask = (description: string) => {
+export const addTask = (description: string) => {
 	let lastTaskId: string | any;
 	let taskToAdd: Task;
 
@@ -168,63 +169,3 @@ if (process.argv[2] === 'add') {
 // 	console.log(allTasks);
 // 	process.exit(0);
 // }
-
-// rl.question(
-// 	'What do you want to do (add | update | delete | list)? ',
-// 	(action: string) => {
-// 		if (!action) {
-// 			console.log('the action can be add | update | delete');
-// 			rl.close();
-// 		}
-// 		if (action === 'add') {
-// 			// rl.question('Task to add : ', (task: string) => {
-// 			// 	addTask(task);
-// 			// });
-// 			console.log('process.argv[1]', process.argv[1]);
-// 		} else if (action === 'update') {
-// 			rl.question('Which task you want to update : ', (id: string) => {
-// 				if (!id) {
-// 					console.log('Id needed !');
-// 					rl.close();
-// 				} else {
-// 					rl.question(
-// 						'What do you want to update (status | description) : ',
-// 						(choice: string) => {
-// 							if (choice === 'status') {
-// 								rl.question(
-// 									'Which status (in-progress | done) : ',
-// 									(status) => {
-// 										updateTasksById(status, id);
-// 										rl.close();
-// 									}
-// 								);
-// 							} else {
-// 								rl.question(
-// 									'New description : ',
-// 									(description) => {
-// 										updateTasksById(description, id);
-// 										rl.close();
-// 									}
-// 								);
-// 							}
-// 							// updateTasksById(newDescription, id);
-// 						}
-// 					);
-// 				}
-// 			});
-// 		} else if (action === 'delete') {
-// 			rl.question(
-// 				'Which tasks do you want to delete: ',
-// 				(deletedTasksId: string) => {
-// 					deleteTaskById(deletedTasksId);
-// 				}
-// 			);
-// 		} else if (action === 'list') {
-// 			console.log(allTasks);
-// 			rl.close();
-// 		} else {
-// 			console.log('allow action add | update | delete | list');
-// 			rl.close();
-// 		}
-// 	}
-// );
