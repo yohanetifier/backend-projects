@@ -1,6 +1,9 @@
+#! /usr/bin/env -node
+
 import readline from 'node:readline';
 import fs from 'node:fs';
-import allTasks from './tasks.json' assert { type: 'json' };
+// import allTasks from './tasks.json' assert { type: 'json' };
+const allTasks = require('./tasks.json');
 import { format } from 'date-fns';
 
 const rl = readline.createInterface({
@@ -11,9 +14,9 @@ const rl = readline.createInterface({
 type STATUS = 'todo' | 'in-progress' | 'done';
 
 type Task = {
-	id: number;
+	id?: number;
 	description: string;
-	status: STATUS;
+	status?: STATUS;
 	createdAt?: string;
 	updatedAt?: string | null;
 };
@@ -23,7 +26,7 @@ const action = process.argv;
 
 const dateOfTheDay = format(new Date(), 'MM/dd/yyyy');
 
-const writeInfiles = (
+export const writeInFiles = (
 	withAllTasks: boolean,
 	content: Task | Task[],
 	id?: string
@@ -81,7 +84,7 @@ const addTask = (description: string) => {
 				updatedAt: null
 			};
 		}
-		writeInfiles(true, taskToAdd);
+		writeInFiles(true, taskToAdd);
 	}
 };
 
@@ -115,7 +118,7 @@ const updateTasksById = (id: string, newDescription?: string) => {
 	if (indexOfTheTaskToUpdate !== -1) {
 		shallowCopy[indexOfTheTaskToUpdate] = taskToUpdate![0];
 	}
-	writeInfiles(false, shallowCopy as unknown as Task[], id);
+	writeInFiles(false, shallowCopy as unknown as Task[], id);
 	rl.close();
 };
 
@@ -140,7 +143,9 @@ const deleteTaskById = (deletedTasksId: string) => {
 
 const retrieveTaskByStatus = (status?: STATUS) => {
 	if (status) {
-		const tasksByStatus = allTasks.filter((task) => task.status === status);
+		const tasksByStatus = allTasks.filter(
+			(task: Task) => task.status === status
+		);
 		if (!tasksByStatus.length) {
 			console.log('No tasks found');
 		} else {
