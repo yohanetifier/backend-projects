@@ -1,13 +1,11 @@
-import { writeInFiles } from './task-tracker.ts';
+import { deleteTaskById, writeInFiles } from './task-tracker.ts';
 const allTasks = require('./tasks.json');
 
-const taskToAdd = {
-	description: 'test'
-};
-
 describe('WriteInFiles function', () => {
-	it('should write add in a files with the same content', () => {
-		writeInFiles(false, taskToAdd);
-		expect(allTasks.length).toContain(taskToAdd);
+	it('should write the files with the same content', async () => {
+		console.log('allTasks.length', allTasks.length);
+		await writeInFiles(true, { id: 99, description: 'testing purpose' });
+		const updatedTask = require('./tasks.json');
+		expect(updatedTask.length).toBe(updatedTask.length + 1);
 	});
 });

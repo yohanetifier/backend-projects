@@ -22,11 +22,10 @@ type Task = {
 };
 
 type Action = 'add' | 'update' | 'delete';
-const action = process.argv;
 
 const dateOfTheDay = format(new Date(), 'MM/dd/yyyy');
 
-export const writeInFiles = (
+export const writeInFiles = async (
 	withAllTasks: boolean,
 	content: Task | Task[],
 	id?: string
@@ -64,26 +63,15 @@ const addTask = (description: string) => {
 		console.log('You have to give a task');
 		process.exit(1);
 	} else {
-		if (allTasks) {
-			lastTaskId = allTasks.slice(-1).map((e: any) => e.id);
-			let lastTaskParse = JSON.parse(lastTaskId);
-			lastTaskParse++;
-			taskToAdd = {
-				id: lastTaskParse,
-				description,
-				status: 'todo',
-				createdAt: dateOfTheDay,
-				updatedAt: null
-			};
-		} else {
-			taskToAdd = {
-				id: 1,
-				description,
-				status: 'todo',
-				createdAt: dateOfTheDay,
-				updatedAt: null
-			};
-		}
+		lastTaskId = allTasks.slice(-1).map((e: any) => e.id);
+		let lastTaskParse = JSON.parse(lastTaskId);
+		taskToAdd = {
+			id: lastTaskParse ? lastTaskParse + 1 : 1,
+			description,
+			status: 'todo',
+			createdAt: dateOfTheDay,
+			updatedAt: null
+		};
 		writeInFiles(true, taskToAdd);
 	}
 };
@@ -122,7 +110,7 @@ const updateTasksById = (id: string, newDescription?: string) => {
 	rl.close();
 };
 
-const deleteTaskById = (deletedTasksId: string) => {
+export const deleteTaskById = (deletedTasksId: string) => {
 	const shallowCopy = allTasks.slice();
 	const othersTasks = shallowCopy.filter(
 		(task: any) => task.id !== parseInt(deletedTasksId)
@@ -155,13 +143,18 @@ const retrieveTaskByStatus = (status?: STATUS) => {
 	}
 };
 
-if (action[2] === 'add') {
+// const action = process.argv;
+
+if (process.argv[2] === 'add') {
 	addTask(process.argv[3]);
-} else if (action[2] === 'update') {
+} else if (process.argv[2] === 'update') {
 	updateTasksById(process.argv[3], process.argv[4]);
-} else if (action[2] === 'delete') {
+} else if (process.argv[2] === 'delete') {
 	deleteTaskById(process.argv[3]);
-} else if (action[2] === 'mark-in-progress' || action[2] === 'mark-done') {
+} else if (
+	process.argv[2] === 'mark-in-progress' ||
+	process.argv[2] === 'mark-done'
+) {
 	updateTasksById(process.argv[3]);
 } else if (
 	process.argv.includes('done') ||
@@ -169,13 +162,13 @@ if (action[2] === 'add') {
 	process.argv.includes('in-progress')
 ) {
 	retrieveTaskByStatus(process.argv[3] as unknown as STATUS);
-} else {
-	// const [, , cmd, ...args] = process.argv;
-	// console.log('process.argv', process.argv);
-	// console.log('args', args);
-	// console.log('cmd', cmd);
+} else if (process.argv[3] === 'list') {
 	console.log('list', allTasks);
 }
+// const [, , cmd, ...args] = process.argv;
+// console.log('process.argv', process.argv);
+// console.log('args', args);
+// console.log('cmd', cmd);
 //  else if (action[2] === 'list' && action[3] === '') {
 // 	console.log(allTasks);
 // 	process.exit(0);
