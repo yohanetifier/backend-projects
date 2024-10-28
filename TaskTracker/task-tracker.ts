@@ -1,10 +1,25 @@
 #! /usr/bin/env -node
 
 import readline from 'node:readline';
-import fs from 'node:fs';
+import fs, { constants } from 'node:fs';
 // import allTasks from './tasks.json' assert { type: 'json' };
-import allTasks from './tasks.json';
+// import allTasks from './tasks.json';
 import { format } from 'date-fns';
+import path from 'path';
+
+let allTasks: Task[] | any;
+
+fs.access('./tasks.json', constants.F_OK, async (err) => {
+	if (err) {
+		console.log('err', err);
+	} else {
+		console.log('ele ');
+		// fetch(`../TaskTracker/tasks.json`)
+		// 	.then((response) => response.json())
+		// 	.then((data) => console.log('data', data))
+		// 	.catch((err) => console.log('err', err));
+	}
+});
 
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -31,11 +46,11 @@ export const writeInFiles = async (
 	id?: string
 ) => {
 	fs.writeFile(
-		'./tasks.json',
-
+		process.env.NODE_ENV !== 'test' ? './tasks.json' : './task-test.json',
 		withAllTasks
 			? JSON.stringify([...allTasks, content])
-			: JSON.stringify(content),
+			: JSON.stringify([content]),
+		{ flag: 'w+' },
 		(err: any) => {
 			if (err) {
 				console.error(err);
@@ -59,16 +74,16 @@ export const addTask = (description: string) => {
 		console.log('You have to give a task');
 		process.exit(1);
 	} else {
-		lastTaskId = allTasks.slice(-1).map((e: any) => e.id);
-		let lastTaskParse = JSON.parse(lastTaskId);
+		// lastTaskId = allTasks.slice(-1).map((e: any) => e.id);
+		// let lastTaskParse = JSON.parse(lastTaskId);
 		taskToAdd = {
-			id: lastTaskParse ? lastTaskParse + 1 : 1,
+			id: 1,
 			description,
 			status: 'todo',
 			createdAt: dateOfTheDay,
 			updatedAt: null
 		};
-		writeInFiles(true, taskToAdd, taskToAdd.id?.toString());
+		writeInFiles(false, taskToAdd, taskToAdd.id?.toString());
 	}
 };
 
@@ -128,7 +143,7 @@ export const deleteTaskById = (deletedTasksId: string) => {
 const retrieveTaskByStatus = (status?: STATUS) => {
 	if (status) {
 		const tasksByStatus = allTasks.filter(
-			(task: Task) => task.status === status
+			(task: any) => task.status === status
 		);
 		if (!tasksByStatus.length) {
 			console.log('No tasks found');
@@ -159,7 +174,7 @@ if (process.argv[2] === 'add') {
 ) {
 	retrieveTaskByStatus(process.argv[3] as unknown as STATUS);
 } else if (process.argv[3] === 'list') {
-	console.log('list', allTasks);
+	// console.log('list', allTasks);
 }
 // const [, , cmd, ...args] = process.argv;
 // console.log('process.argv', process.argv);
