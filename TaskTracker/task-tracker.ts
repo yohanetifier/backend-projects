@@ -7,19 +7,19 @@ import fs, { constants } from 'node:fs';
 import { format } from 'date-fns';
 import path from 'path';
 
-let allTasks: Task[] | any;
+let allTasks: Task[] = [];
 
-fs.access('./tasks.json', constants.F_OK, async (err) => {
-	if (err) {
-		console.log('err', err);
-	} else {
-		console.log('ele ');
-		// fetch(`../TaskTracker/tasks.json`)
-		// 	.then((response) => response.json())
-		// 	.then((data) => console.log('data', data))
-		// 	.catch((err) => console.log('err', err));
-	}
-});
+// fs.access('./tasks.json', constants.F_OK, async (err) => {
+// 	if (err) {
+// 		console.log('err', err);
+// 	} else {
+// 		console.log('ele ');
+// 		// fetch(`../TaskTracker/tasks.json`)
+// 		// 	.then((response) => response.json())
+// 		// 	.then((data) => console.log('data', data))
+// 		// 	.catch((err) => console.log('err', err));
+// 	}
+// });
 
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -47,9 +47,7 @@ export const writeInFiles = async (
 ) => {
 	fs.writeFile(
 		process.env.NODE_ENV !== 'test' ? './tasks.json' : './task-test.json',
-		withAllTasks
-			? JSON.stringify([...allTasks, content])
-			: JSON.stringify([content]),
+		withAllTasks ? JSON.stringify(content) : JSON.stringify([content]),
 		{ flag: 'w+' },
 		(err: any) => {
 			if (err) {
@@ -74,16 +72,56 @@ export const addTask = (description: string) => {
 		console.log('You have to give a task');
 		process.exit(1);
 	} else {
+		const filePath = path.join(__dirname, 'tasks.json');
+		fs.readFile(filePath, 'utf8', (err, data) => {
+			if (err) {
+				// console.error(err);
+				taskToAdd = {
+					id: 1,
+					description,
+					status: 'todo',
+					createdAt: dateOfTheDay,
+					updatedAt: null
+				};
+				writeInFiles(false, taskToAdd, taskToAdd.id?.toString());
+				return;
+			} else {
+				try {
+					const task = JSON.parse(data);
+					let lastTaskId = parseInt(
+						task.slice(-1).map((e: any) => e.id)
+					);
+					taskToAdd = {
+						id: lastTaskId + 1,
+						description,
+						status: 'todo',
+						createdAt: dateOfTheDay,
+						updatedAt: null
+					};
+					writeInFiles(
+						true,
+						[...task, taskToAdd],
+						taskToAdd.id?.toString()
+					);
+				} catch (e) {
+					console.error('Erreur parsing');
+				}
+			}
+		});
 		// lastTaskId = allTasks.slice(-1).map((e: any) => e.id);
 		// let lastTaskParse = JSON.parse(lastTaskId);
-		taskToAdd = {
-			id: 1,
-			description,
-			status: 'todo',
-			createdAt: dateOfTheDay,
-			updatedAt: null
-		};
-		writeInFiles(false, taskToAdd, taskToAdd.id?.toString());
+		// taskToAdd = {
+		// 	id: 1,
+		// 	description,
+		// 	status: 'todo',
+		// 	createdAt: dateOfTheDay,
+		// 	updatedAt: null
+		// };
+		// writeInFiles(
+		// 	allTasks.length > 0 ? true : false,
+		// 	taskToAdd,
+		// 	taskToAdd.id?.toString()
+		// );
 	}
 };
 
