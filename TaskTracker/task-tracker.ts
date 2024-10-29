@@ -1,25 +1,11 @@
-#! /usr/bin/env -node
+#! /usr/bin/env node
 
 import readline from 'node:readline';
 import fs, { constants } from 'node:fs';
-// import allTasks from './tasks.json' assert { type: 'json' };
-// import allTasks from './tasks.json';
 import { format } from 'date-fns';
 import path from 'path';
 
 let allTasks: Task[] = [];
-
-// fs.access('./tasks.json', constants.F_OK, async (err) => {
-// 	if (err) {
-// 		console.log('err', err);
-// 	} else {
-// 		console.log('ele ');
-// 		// fetch(`../TaskTracker/tasks.json`)
-// 		// 	.then((response) => response.json())
-// 		// 	.then((data) => console.log('data', data))
-// 		// 	.catch((err) => console.log('err', err));
-// 	}
-// });
 
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -43,6 +29,7 @@ const dateOfTheDay = format(new Date(), 'MM/dd/yyyy');
 export const writeInFiles = async (
 	withAllTasks: boolean,
 	content: Task | Task[],
+	type: Action,
 	id?: string
 ) => {
 	fs.writeFile(
@@ -53,7 +40,11 @@ export const writeInFiles = async (
 			if (err) {
 				console.error(err);
 			} else {
-				console.log(`Tasks ${id} added successfully`);
+				type === 'add'
+					? console.log(`Tasks ${id} added successfully`)
+					: type === 'update'
+					? console.log(`Tasks ${id} updated successfully`)
+					: console.log(`Tasks ${id} deleted successfully`);
 				process.exit(1);
 			}
 		}
@@ -71,7 +62,6 @@ export const addTask = (description: string) => {
 		const filePath = path.join(__dirname, 'tasks.json');
 		fs.readFile(filePath, 'utf8', (err, data) => {
 			if (err) {
-				// console.error(err);
 				taskToAdd = {
 					id: 1,
 					description,
@@ -79,7 +69,7 @@ export const addTask = (description: string) => {
 					createdAt: dateOfTheDay,
 					updatedAt: null
 				};
-				writeInFiles(false, taskToAdd, taskToAdd.id?.toString());
+				writeInFiles(false, taskToAdd, 'add', taskToAdd.id?.toString());
 				return;
 			} else {
 				try {
@@ -97,6 +87,7 @@ export const addTask = (description: string) => {
 					writeInFiles(
 						true,
 						[...task, taskToAdd],
+						'add',
 						taskToAdd.id?.toString()
 					);
 				} catch (e) {
@@ -104,27 +95,23 @@ export const addTask = (description: string) => {
 				}
 			}
 		});
-		// lastTaskId = allTasks.slice(-1).map((e: any) => e.id);
-		// let lastTaskParse = JSON.parse(lastTaskId);
-		// taskToAdd = {
-		// 	id: 1,
-		// 	description,
-		// 	status: 'todo',
-		// 	createdAt: dateOfTheDay,
-		// 	updatedAt: null
-		// };
-		// writeInFiles(
-		// 	allTasks.length > 0 ? true : false,
-		// 	taskToAdd,
-		// 	taskToAdd.id?.toString()
-		// );
 	}
 };
 
-const updateTasksById = (id: string, newDescription?: string) => {
+const getAllTasks = async () => {
+	try {
+		const data = await fs.promises.readFile('./tasks.json', 'utf8');
+		const allTasks = JSON.parse(data);
+		return allTasks;
+	} catch (err) {
+		console.error(err);
+	}
+};
+
+const updateTasksById = async (id: string, newDescription?: string) => {
+	const allTasks = await getAllTasks();
 	let taskToUpdate;
-	const shallowCopy = allTasks.slice();
-	let filterTaskArray = shallowCopy.filter((t: any) => t.id === parseInt(id));
+	let filterTaskArray = allTasks.filter((t: any) => t.id === parseInt(id));
 	const taskToUpdateFunction = (newStatus: STATUS) => {
 		return (taskToUpdate = filterTaskArray.map((t: any) => ({
 			...t,
@@ -149,9 +136,9 @@ const updateTasksById = (id: string, newDescription?: string) => {
 	);
 
 	if (indexOfTheTaskToUpdate !== -1) {
-		shallowCopy[indexOfTheTaskToUpdate] = taskToUpdate![0];
+		allTasks[indexOfTheTaskToUpdate] = taskToUpdate![0];
 	}
-	writeInFiles(false, shallowCopy as unknown as Task[], id);
+	writeInFiles(true, allTasks as unknown as Task[], 'update', id);
 	rl.close();
 };
 
@@ -195,6 +182,8 @@ if (process.argv[2] === 'add') {
 } else if (process.argv[2] === 'update') {
 	updateTasksById(process.argv[3], process.argv[4]);
 } else if (process.argv[2] === 'delete') {
+	console.log(process.argv[3]);
+
 	deleteTaskById(process.argv[3]);
 } else if (
 	process.argv[2] === 'mark-in-progress' ||
