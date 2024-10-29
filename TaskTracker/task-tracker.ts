@@ -53,11 +53,7 @@ export const writeInFiles = async (
 			if (err) {
 				console.error(err);
 			} else {
-				console.log(
-					withAllTasks
-						? `Task ${id} added successfully `
-						: `Tasks added successfully`
-				);
+				console.log(`Tasks ${id} added successfully`);
 				process.exit(1);
 			}
 		}
