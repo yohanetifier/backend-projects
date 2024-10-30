@@ -47,7 +47,7 @@ export const writeInFiles = async (
 };
 
 const taskNotFound = (id: string) => {
-	console.error(`No tasks with the id ${id} found. Try again`);
+	console.error(`No tasks ${id} found. Try again`);
 };
 
 const successMessage = (id: string, action: Action) => {
@@ -109,22 +109,24 @@ export const addTask = (description: string) => {
 	}
 };
 
-const getAllTasks = async (): Promise<any> => {
+const getAllTasks = async (): Promise<Task[]> => {
+	let allTasks = [];
 	try {
 		const data = await fs.promises.readFile('./tasks.json', 'utf8');
-		const allTasks = JSON.parse(data);
+		allTasks = JSON.parse(data);
 		return allTasks;
 	} catch (err) {
 		console.error(err);
+		return allTasks;
 	}
 };
 
 const updateTasksById = async (id: string, newDescription?: string) => {
 	const allTasks = await getAllTasks();
 	let taskToUpdate;
-	let filterTaskArray = allTasks.filter((t: any) => t.id === parseInt(id));
+	let filterTaskArray = allTasks.filter((t) => t.id === parseInt(id));
 	const taskToUpdateFunction = (newStatus: STATUS) => {
-		return (taskToUpdate = filterTaskArray.map((t: any) => ({
+		return (taskToUpdate = filterTaskArray.map((t) => ({
 			...t,
 			status: newStatus,
 			updatedAt: dateOfTheDay
@@ -138,7 +140,7 @@ const updateTasksById = async (id: string, newDescription?: string) => {
 		} else if (process.argv[2] === 'mark-done') {
 			taskToUpdateFunction('done');
 		} else {
-			taskToUpdate = filterTaskArray.map((t: any) => ({
+			taskToUpdate = filterTaskArray.map((t) => ({
 				...t,
 				description: newDescription,
 				updatedAt: dateOfTheDay
@@ -146,11 +148,11 @@ const updateTasksById = async (id: string, newDescription?: string) => {
 		}
 
 		const indexOfTheTaskToUpdate = allTasks.findIndex(
-			(task: any) => task.id === parseInt(id)
+			(task) => task.id === parseInt(id)
 		);
 
 		if (indexOfTheTaskToUpdate !== -1) {
-			allTasks[indexOfTheTaskToUpdate] = taskToUpdate![0];
+			allTasks[indexOfTheTaskToUpdate] = taskToUpdate![0] as Task;
 		}
 		writeInFiles(allTasks as unknown as Task[], 'update', id);
 	}
@@ -160,7 +162,7 @@ const updateTasksById = async (id: string, newDescription?: string) => {
 export const deleteTaskById = async (deletedTasksId: string) => {
 	const allTasks = await getAllTasks();
 	const othersTasks = allTasks.filter(
-		(task: any) => task.id !== parseInt(deletedTasksId)
+		(task) => task.id !== parseInt(deletedTasksId)
 	);
 	if (othersTasks.length === allTasks.length) {
 		taskNotFound(deletedTasksId);
@@ -173,10 +175,9 @@ export const deleteTaskById = async (deletedTasksId: string) => {
 const retrieveTaskByStatus = async (status?: STATUS) => {
 	if (status) {
 		const allTasks = await getAllTasks();
-		const tasksByStatus = allTasks.filter(
-			(task: any) => task.status === status
-		);
+		const tasksByStatus = allTasks.filter((task) => task.status === status);
 		if (!tasksByStatus.length) {
+			taskNotFound(status);
 			process.exit(1);
 		} else {
 			console.log(`Tasks ${status} : `, tasksByStatus);
