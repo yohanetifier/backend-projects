@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 import readline from 'node:readline';
-import fs, { constants } from 'node:fs';
+import fs from 'node:fs';
 import { format } from 'date-fns';
 import path from 'path';
 
@@ -27,32 +27,42 @@ type Action = 'add' | 'update' | 'delete';
 const dateOfTheDay = format(new Date(), 'MM/dd/yyyy');
 
 export const writeInFiles = async (
-	withAllTasks: boolean,
 	content: Task | Task[],
 	type: Action,
 	id?: string
 ) => {
 	fs.writeFile(
 		process.env.NODE_ENV !== 'test' ? './tasks.json' : './task-test.json',
-		withAllTasks ? JSON.stringify(content) : JSON.stringify([content]),
+		JSON.stringify(content),
 		{ flag: 'w+' },
 		(err: any) => {
 			if (err) {
 				console.error(err);
 			} else {
-				type === 'add'
-					? console.log(`Tasks ${id} added successfully`)
-					: type === 'update'
-					? console.log(`Tasks ${id} updated successfully`)
-					: console.log(`Tasks ${id} deleted successfully`);
+				successMessage(id!, type);
 				process.exit(1);
 			}
 		}
 	);
 };
 
+const taskNotFound = (id: string) => {
+	console.error(`No tasks with the id ${id} found. Try again`);
+};
+
+const successMessage = (id: string, action: Action) => {
+	console.log(
+		`Tasks ${id} ${
+			action === 'add'
+				? 'added'
+				: action === 'delete'
+				? 'deleted'
+				: 'updated'
+		} successfully`
+	);
+};
+
 export const addTask = (description: string) => {
-	let lastTaskId: string | any;
 	let taskToAdd: Task;
 
 	if (!description) {
@@ -60,7 +70,7 @@ export const addTask = (description: string) => {
 		process.exit(1);
 	} else {
 		const filePath = path.join(__dirname, 'tasks.json');
-		fs.readFile(filePath, 'utf8', (err, data) => {
+		fs.readFile(filePath, 'utf8', async (err, data) => {
 			if (err) {
 				taskToAdd = {
 					id: 1,
@@ -69,36 +79,37 @@ export const addTask = (description: string) => {
 					createdAt: dateOfTheDay,
 					updatedAt: null
 				};
-				writeInFiles(false, taskToAdd, 'add', taskToAdd.id?.toString());
+				writeInFiles([taskToAdd], 'add', taskToAdd.id?.toString());
 				return;
 			} else {
+				const allTasks = await getAllTasks();
 				try {
 					const task = JSON.parse(data);
 					let lastTaskId = parseInt(
 						task.slice(-1).map((e: any) => e.id)
 					);
 					taskToAdd = {
-						id: lastTaskId + 1,
+						id: allTasks.length > 0 ? lastTaskId + 1 : 1,
 						description,
 						status: 'todo',
 						createdAt: dateOfTheDay,
 						updatedAt: null
 					};
 					writeInFiles(
-						true,
 						[...task, taskToAdd],
 						'add',
 						taskToAdd.id?.toString()
 					);
 				} catch (e) {
 					console.error('Erreur parsing');
+					process.exit(1);
 				}
 			}
 		});
 	}
 };
 
-const getAllTasks = async () => {
+const getAllTasks = async (): Promise<any> => {
 	try {
 		const data = await fs.promises.readFile('./tasks.json', 'utf8');
 		const allTasks = JSON.parse(data);
@@ -119,91 +130,81 @@ const updateTasksById = async (id: string, newDescription?: string) => {
 			updatedAt: dateOfTheDay
 		})));
 	};
-	if (process.argv[2] === 'mark-in-progress') {
-		taskToUpdateFunction('in-progress');
-	} else if (process.argv[2] === 'mark-done') {
-		taskToUpdateFunction('done');
+	if (!filterTaskArray.length) {
+		taskNotFound(id);
 	} else {
-		taskToUpdate = filterTaskArray.map((t: any) => ({
-			...t,
-			description: newDescription,
-			updatedAt: dateOfTheDay
-		}));
-	}
+		if (process.argv[2] === 'mark-in-progress') {
+			taskToUpdateFunction('in-progress');
+		} else if (process.argv[2] === 'mark-done') {
+			taskToUpdateFunction('done');
+		} else {
+			taskToUpdate = filterTaskArray.map((t: any) => ({
+				...t,
+				description: newDescription,
+				updatedAt: dateOfTheDay
+			}));
+		}
 
-	const indexOfTheTaskToUpdate = allTasks.findIndex(
-		(task: any) => task.id === parseInt(id)
-	);
+		const indexOfTheTaskToUpdate = allTasks.findIndex(
+			(task: any) => task.id === parseInt(id)
+		);
 
-	if (indexOfTheTaskToUpdate !== -1) {
-		allTasks[indexOfTheTaskToUpdate] = taskToUpdate![0];
+		if (indexOfTheTaskToUpdate !== -1) {
+			allTasks[indexOfTheTaskToUpdate] = taskToUpdate![0];
+		}
+		writeInFiles(allTasks as unknown as Task[], 'update', id);
 	}
-	writeInFiles(true, allTasks as unknown as Task[], 'update', id);
 	rl.close();
 };
 
-export const deleteTaskById = (deletedTasksId: string) => {
-	const shallowCopy = allTasks.slice();
-	const othersTasks = shallowCopy.filter(
+export const deleteTaskById = async (deletedTasksId: string) => {
+	const allTasks = await getAllTasks();
+	const othersTasks = allTasks.filter(
 		(task: any) => task.id !== parseInt(deletedTasksId)
 	);
-	fs.writeFile(
-		'./tasks.json',
-		JSON.stringify([...othersTasks]),
-		(err: any) => {
-			if (err) {
-				console.log(err);
-			} else {
-				console.log(`Tasks ${deletedTasksId} deleted !`);
-				rl.close();
-			}
-		}
-	);
+	if (othersTasks.length === allTasks.length) {
+		taskNotFound(deletedTasksId);
+		process.exit(1);
+	} else {
+		writeInFiles([...othersTasks], 'delete', deletedTasksId);
+	}
 };
 
-const retrieveTaskByStatus = (status?: STATUS) => {
+const retrieveTaskByStatus = async (status?: STATUS) => {
 	if (status) {
+		const allTasks = await getAllTasks();
 		const tasksByStatus = allTasks.filter(
 			(task: any) => task.status === status
 		);
 		if (!tasksByStatus.length) {
-			console.log('No tasks found');
+			process.exit(1);
 		} else {
 			console.log(`Tasks ${status} : `, tasksByStatus);
+			process.exit(0);
 		}
-		process.exit(0);
 	}
 };
 
-// const action = process.argv;
+const [_, __, ...action] = process.argv;
 
-if (process.argv[2] === 'add') {
-	addTask(process.argv[3]);
-} else if (process.argv[2] === 'update') {
-	updateTasksById(process.argv[3], process.argv[4]);
-} else if (process.argv[2] === 'delete') {
-	console.log(process.argv[3]);
-
-	deleteTaskById(process.argv[3]);
-} else if (
-	process.argv[2] === 'mark-in-progress' ||
-	process.argv[2] === 'mark-done'
-) {
-	updateTasksById(process.argv[3]);
+if (action[0] === 'add') {
+	addTask(action[1]);
+} else if (action[0] === 'update') {
+	updateTasksById(action[1], action[2]);
+} else if (action[0] === 'delete') {
+	deleteTaskById(action[1]);
+} else if (action[0] === 'mark-in-progress' || action[0] === 'mark-done') {
+	updateTasksById(action[1]);
 } else if (
 	process.argv.includes('done') ||
 	process.argv.includes('todo') ||
 	process.argv.includes('in-progress')
 ) {
-	retrieveTaskByStatus(process.argv[3] as unknown as STATUS);
-} else if (process.argv[3] === 'list') {
-	// console.log('list', allTasks);
+	retrieveTaskByStatus(action[1] as unknown as STATUS);
+} else if (action[0] === 'list') {
+	getAllTasks().then((task) => console.table(task));
+} else {
+	console.log(
+		'Please provid a valid action. Valid action are: add, update, delete, list'
+	);
 }
-// const [, , cmd, ...args] = process.argv;
-// console.log('process.argv', process.argv);
-// console.log('args', args);
-// console.log('cmd', cmd);
-//  else if (action[2] === 'list' && action[3] === '') {
-// 	console.log(allTasks);
-// 	process.exit(0);
-// }
