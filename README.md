@@ -6,4 +6,4 @@ Solution for each project is in the respective folder. The folder name is the sa
 
 ## Projects
 
--   Task Tracker
+1.  Task Tracker
