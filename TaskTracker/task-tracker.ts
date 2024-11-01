@@ -5,8 +5,6 @@ import fs from 'node:fs';
 import { format } from 'date-fns';
 import path from 'path';
 
-let allTasks: Task[] = [];
-
 const rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout
@@ -139,6 +137,8 @@ const updateTasksById = async (id: string, newDescription?: string) => {
 			taskToUpdateFunction('in-progress');
 		} else if (process.argv[2] === 'mark-done') {
 			taskToUpdateFunction('done');
+		} else if (process.argv[2] === 'mark-todo') {
+			taskToUpdateFunction('todo');
 		} else {
 			taskToUpdate = filterTaskArray.map((t) => ({
 				...t,
@@ -194,7 +194,11 @@ if (action[0] === 'add') {
 	updateTasksById(action[1], action[2]);
 } else if (action[0] === 'delete') {
 	deleteTaskById(action[1]);
-} else if (action[0] === 'mark-in-progress' || action[0] === 'mark-done') {
+} else if (
+	action[0] === 'mark-in-progress' ||
+	action[0] === 'mark-done' ||
+	action[0] === 'mark-todo'
+) {
 	updateTasksById(action[1]);
 } else if (
 	process.argv.includes('done') ||
@@ -203,7 +207,9 @@ if (action[0] === 'add') {
 ) {
 	retrieveTaskByStatus(action[1] as unknown as STATUS);
 } else if (action[0] === 'list') {
-	getAllTasks().then((task) => console.table(task));
+	getAllTasks()
+		.then((task) => console.table(task))
+		.then(() => process.exit(0));
 } else {
 	console.log(
 		'Please provid a valid action. Valid action are: add, update, delete, list'
