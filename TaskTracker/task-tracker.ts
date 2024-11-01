@@ -212,6 +212,7 @@ if (action[0] === 'add') {
 		.then(() => process.exit(0));
 } else {
 	console.log(
-		'Please provid a valid action. Valid action are: add, update, delete, list'
+		'Please provid a valid action. Valid action are: add, update, delete, list, mark-done, mark-in-progress, mark-todo'
 	);
+	process.exit(1);
 }

@@ -7,34 +7,49 @@ Sample solution for the task-tracker challenge from roadmap.sh.
 Clone the repository and run the following command:
 
 git clone https://github.com/yohanetifier/backend-projects.git
-cd backend-projects/task-tracker
 
-Run the following command to build and run the project:
+cd backend-projects/TaskTracker
 
-go build -o task-tracker
-./task-tracker --help # To see the list of available commands
+## Run the following command to build and run the project
+
+### Install all dependencies
+
+you can check the version of node with node -v
+
+version required: node 18
+
+if you have not node please check the docs nodejs.org/en to install it
+
+Otherwise use nvm to update your node version
+
+When node is installed run yarn to install all the dependencies
 
 ## To add a task
 
-./task-tracker add "Buy groceries"
+npx ts-node task add "Buy groceries"
 
 ## To update a task
 
-./task-tracker update 1 "Buy groceries and cook dinner"
+npx ts-node task update 1 "Buy groceries and cook dinner"
 
 ## To delete a task
 
-./task-tracker delete 1
+npx ts-node task delete 1
 
 ## To mark a task as in progress/done/todo
 
-./task-tracker mark-in-progress 1
-./task-tracker mark-done 1
-./task-tracker mark-todo 1
+npx ts-node task mark-in-progress 1
+
+npx ts-node task mark-done 1
+
+npx ts-node task mark-todo 1
 
 ## To list all tasks
 
-./task-tracker list
-./task-tracker list done
-./task-tracker list todo
-./task-tracker list in-progress
+npx ts-node task list
+
+npx ts-node task list done
+
+npx ts-node task list todo
+
+npx ts-node task list in-progress
