@@ -6,9 +6,10 @@ Sample solution for the task-tracker challenge from roadmap.sh.
 
 Clone the repository and run the following command:
 
+```
 git clone https://github.com/yohanetifier/backend-projects.git
-
 cd backend-projects/TaskTracker
+```
 
 ## Run the following command to build and run the project
 
@@ -22,7 +23,7 @@ if you have not node please check the docs nodejs.org/en to install it
 
 Otherwise use nvm to update your node version
 
-When node is installed run yarn to install all the dependencies
+When node is ready run yarn to install all the dependencies
 
 ## To add a task
 
