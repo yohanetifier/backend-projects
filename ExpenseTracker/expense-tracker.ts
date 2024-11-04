@@ -21,7 +21,9 @@ type Expense = {
 	amount: number;
 };
 
-const writeInFiles = (content: any) => {
+type Action = 'add' | 'delete';
+
+const writeInFiles = (content: any, id: number, action: Action) => {
 	fs.writeFile(
 		'./expense-tracker.json',
 		JSON.stringify(content),
@@ -29,7 +31,11 @@ const writeInFiles = (content: any) => {
 			if (err) {
 				console.error(err);
 			} else {
-				console.log('Task added successfully');
+				console.log(
+					`Task ${id} ${
+						action === 'add' ? 'added' : 'deleted'
+					} successfully`
+				);
 			}
 		}
 	);
@@ -43,14 +49,14 @@ const addExpense = async (description: string, amount: number) => {
 	if (fs.existsSync('./expense-tracker.json')) {
 		const allExpense = await getAllExpenses();
 		if (allExpense) {
-			let lastId = allExpense.slice(-1)[0].id;
+			let lastId = allExpense.length > 0 ? allExpense.slice(-1)[0].id : 0;
 			let expenseToAdd = {
-				id: lastId! + 1,
+				id: lastId ? lastId! + 1 : 1,
 				date: dateOfTheDay,
 				description,
 				amount
 			};
-			writeInFiles([...allExpense, expenseToAdd]);
+			writeInFiles([...allExpense, expenseToAdd], lastId! + 1, 'add');
 		}
 	} else {
 		let expenseToAdd = {
@@ -59,7 +65,7 @@ const addExpense = async (description: string, amount: number) => {
 			description,
 			amount
 		};
-		writeInFiles([expenseToAdd]);
+		writeInFiles([expenseToAdd], 1, 'add');
 	}
 };
 
@@ -72,7 +78,7 @@ const deleteExpenseById = async (id: number) => {
 		if (expenseToDelete.length === allExpense.length) {
 			console.log(`Expense with id ${id} not exist`);
 		} else {
-			writeInFiles(expenseToDelete);
+			writeInFiles(expenseToDelete, id, 'delete');
 		}
 	} else {
 		console.log('No expense to delete');
