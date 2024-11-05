@@ -26,26 +26,41 @@ const chances = {
 
 const startRound = (level: Level) => {
 	rl.question(guessNumberSentence, (input: string) => {
-		if (parseInt(input) > guessingNumber) {
-			console.log(`Incorrect! The number is less than ${input}`);
-			count -= 1;
-			startRound(level);
-		} else if (parseInt(input) < guessingNumber) {
-			console.log(`Incorrect! The number is greater than ${input}`);
-			count -= 1;
-			startRound(level);
-		} else if (count > 0 && parseInt(input) === guessingNumber) {
-			console.log(
-				`Congratulations! You guessed the correct number in ${
-					chances[level] - count
-				} attempts`
-			);
+		if (count === 1) {
+			console.log('You lost the game...');
 			rl.close();
-		} else if (count === 0 && parseInt(input) !== guessingNumber) {
-			console.log('Sorry but you loose...');
-			rl.close();
+		} else {
+			if (parseInt(input) > guessingNumber) {
+				console.log(`Incorrect! The number is less than ${input}`);
+				count -= 1;
+				startRound(level);
+			} else if (parseInt(input) < guessingNumber) {
+				console.log(`Incorrect! The number is greater than ${input}`);
+				count -= 1;
+				startRound(level);
+			} else if (count > 0 && parseInt(input) === guessingNumber) {
+				console.log(
+					`Congratulations! You guessed the correct number in ${
+						chances[level] - count + 1
+					} attempts`
+				);
+				rl.close();
+			}
 		}
 	});
+};
+
+const selectLevel = {
+	1: 'Easy',
+	2: 'Medium',
+	3: 'Hard'
+};
+
+const selectLevelPhrase = (input: string) => {
+	const inputInNumber = parseInt(input);
+	console.log(
+		`\nGreat! You have selected the ${selectLevel[inputInNumber]}  difficulty level\nLet's start the game!`
+	);
 };
 
 const startingGame = () => {
@@ -60,9 +75,27 @@ const startingGame = () => {
 				for (let i = 0; i < count; i++) {
 					startRound('easy');
 				}
-
+				break;
+			case '2':
+				console.log(
+					"\nGreat! You have selected the Medium difficulty level\nLet's start the game!"
+				);
+				count = chances['medium'];
+				for (let i = 1; i < count; i++) {
+					startRound('medium');
+				}
+				break;
+			case '3':
+				console.log(
+					"\nGreat! You have selected the Hard difficulty level\nLet's start the game!"
+				);
+				count = chances['hard'];
+				for (let i = 0; i < count; i++) {
+					startRound('hard');
+				}
 				break;
 		}
+
 		// rl.close();
 	});
 };
