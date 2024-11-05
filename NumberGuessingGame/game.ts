@@ -17,7 +17,10 @@ const guessNumberSentence = 'Enter your guess: ';
 let guessingNumber = Math.floor(Math.random() * 100);
 let count: number = 0;
 
-const level = {
+type Level = 'Easy' | 'Medium' | 'Hard';
+type Chances = 10 | 5 | 3;
+
+const level: { [key: string]: { level: Level; chances: Chances } } = {
 	'1': {
 		level: 'Easy',
 		chances: 10
