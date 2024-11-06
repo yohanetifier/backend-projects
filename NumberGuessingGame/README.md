@@ -17,7 +17,7 @@ cd backend-projects/NumberGuessingGame
 
 ## How to Play
 
-1. Run the game by executing typescript file "npx ts-node --esm game.ts"
+1. Run the game by executing typescript file "npx ts-node --esm main.ts"
 2. You will be presented with a welcome message and a prompt to select the difficulty level.
 3. Choose the difficulty level by entering 1 for Easy, 2 for Medium, or 3 for Hard.
 4. Once you've selected the difficulty level, you will be prompted to enter your guess.
