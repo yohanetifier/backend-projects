@@ -4,12 +4,22 @@ const app: Express = express();
 
 app.use(express.json());
 
-app.post(
-	'http://locahost:3000/:postCode',
-	(req: Request, res: Response, next: NextFunction) => {
-		console.log('req.body', req.body);
-		next();
-	}
-);
+app.use((req: Request, res: Response, next: NextFunction) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader(
+		'Access-Control-Allow-Headers',
+		'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
+	);
+	res.setHeader(
+		'Access-Control-Allow-Methods',
+		'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+	);
+	next();
+});
+
+app.post('/api/:city', (req: Request, res: Response, next: NextFunction) => {
+	console.log('req.body', req.params.city);
+	res.status(200).json({ message: `${req.params.city}` });
+});
 
 export default app;
