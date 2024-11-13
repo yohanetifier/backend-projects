@@ -1,4 +1,5 @@
 import express, { Response, Request, Express, NextFunction } from 'express';
+import router from './routes/detailsCityRoutes';
 
 const app: Express = express();
 
@@ -17,9 +18,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 	next();
 });
 
-app.post('/api/:city', (req: Request, res: Response, next: NextFunction) => {
-	console.log('req.body', req.params.city);
-	res.status(200).json({ message: `${req.params.city}` });
-});
+app.use('/api', router);
 
 export default app;
