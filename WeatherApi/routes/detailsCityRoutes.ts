@@ -1,8 +1,8 @@
 import express from 'express';
-import { detailsCity } from '../controllers/city';
+import { detailsCityCtrl } from '../controllers/city';
 
 const router = express.Router();
 
-router.post('/city', detailsCity);
+router.post('/city', detailsCityCtrl);
 
 export default router;
