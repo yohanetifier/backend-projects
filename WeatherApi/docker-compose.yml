@@ -1,0 +1,6 @@
+services:
+    redis_db:
+        container_name: Weather.Api_Redis
+        image: redis:7.4.1-alpine
+        ports:
+            - 6379:6379
