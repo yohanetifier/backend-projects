@@ -1,6 +1,6 @@
 export interface UserRepository {
-  createUser: () => void;
-  getUser: () => void;
-  updateUser: () => void;
-  deleteUser: () => void;
+  createUser: () => string;
+  getUser: () => string;
+  updateUser: () => string;
+  deleteUser: () => string;
 }
