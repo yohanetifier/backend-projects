@@ -51,6 +51,7 @@ const createCityInTheDb = async (
 		date: `${days.datetime}`
 	};
 	await client.hSet(`${normalizeCity}`, daysDetails);
+	await client.expire(`${normalizeCity}`, 43200);
 };
 
 export const detailsCityCtrl = async (
