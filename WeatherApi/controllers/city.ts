@@ -35,7 +35,10 @@ const checkCityInRedis = async (
 	}
 };
 
-const createCityInTheDb = async (normalizeCity: string, data: DataFromDB) => {
+const createCityInTheDb = async (
+	normalizeCity: string,
+	data: DataFromDB
+): Promise<void> => {
 	const days = data.days[0];
 	const daysDetails: Days = {
 		address: `${data.resolvedAddress}`,
@@ -50,7 +53,10 @@ const createCityInTheDb = async (normalizeCity: string, data: DataFromDB) => {
 	await client.hSet(`${normalizeCity}`, daysDetails);
 };
 
-export const detailsCityCtrl = async (req: Request, res: Response) => {
+export const detailsCityCtrl = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
 	const { city } = req.body;
 	let normalizeCity = city ? city.toLowerCase() : null;
 	if (!city) {
@@ -62,7 +68,7 @@ export const detailsCityCtrl = async (req: Request, res: Response) => {
 			res.send(data);
 		} else {
 			try {
-				const endpoints = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=UBH5HDB3WDYUKSLEFZRA6PBEV`;
+				const endpoints = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=${process.env.VISUAL_CROSSING_API_KEY}`;
 				const response = await fetch(endpoints);
 				const data = await response.json();
 				if (data.days[0]) {
@@ -74,7 +80,7 @@ export const detailsCityCtrl = async (req: Request, res: Response) => {
 					});
 				}
 			} catch (error) {
-				res.status(500).json({ error: error });
+				res.status(500).json({ error: 'No city found' });
 			}
 		}
 	}
