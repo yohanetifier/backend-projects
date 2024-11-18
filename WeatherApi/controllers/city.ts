@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { client } from '../app';
 
 type Days = {
@@ -12,26 +12,53 @@ type Days = {
 	date: string;
 };
 
-export const detailsCityCtrl = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
+type DataFromDB = {
+	resolvedAddress: string;
+	days: Array<
+		Omit<Days, 'address' | 'date' | 'tempMax' | 'temMin'> & {
+			tempmax: string;
+			tempmin: string;
+			datetime: string;
+		}
+	>;
+};
+
+const checkCityInRedis = async (
+	normalizeCity: string
+): Promise<{ [x: string]: string } | null> => {
+	const checkIfCityIsInTheCache = await client.hGetAll(`${normalizeCity}`);
+	const isPresentInCache = Object.hasOwn(checkIfCityIsInTheCache, 'address');
+	if (isPresentInCache) {
+		return checkIfCityIsInTheCache;
+	} else {
+		return null;
+	}
+};
+
+const createCityInTheDb = async (normalizeCity: string, data: DataFromDB) => {
+	const days = data.days[0];
+	const daysDetails: Days = {
+		address: `${data.resolvedAddress}`,
+		tempMax: Number(`${days.tempmax}`),
+		tempMin: Number(`${days.tempmin}`),
+		temp: Number(`${days.temp}`),
+		description: `${days.description}`,
+		sunrise: `${days.sunrise}`,
+		sunset: `${days.sunset}`,
+		date: `${days.datetime}`
+	};
+	await client.hSet(`${normalizeCity}`, daysDetails);
+};
+
+export const detailsCityCtrl = async (req: Request, res: Response) => {
 	const { city } = req.body;
-	const normalizeCity = city.toLowerCase();
-	if (!normalizeCity) {
+	let normalizeCity = city ? city.toLowerCase() : null;
+	if (!city) {
 		res.status(500).json({ message: 'No city provided' });
 	} else {
-		const checkIfCityIsInTheCache = await client.hGetAll(
-			`${normalizeCity}`
-		);
-		const isPresentInCache = Object.hasOwn(
-			checkIfCityIsInTheCache,
-			'address'
-		);
-
+		const isPresentInCache = await checkCityInRedis(normalizeCity);
 		if (isPresentInCache) {
-			const data = JSON.stringify(checkIfCityIsInTheCache);
+			const data = JSON.stringify(isPresentInCache);
 			res.send(data);
 		} else {
 			try {
@@ -39,18 +66,7 @@ export const detailsCityCtrl = async (
 				const response = await fetch(endpoints);
 				const data = await response.json();
 				if (data.days[0]) {
-					const days = data.days[0];
-					const daysDetails: Days = {
-						address: `${data.resolvedAddress}`,
-						tempMax: Number(`${days.tempmax}`),
-						tempMin: Number(`${days.tempmin}`),
-						temp: Number(`${days.temp}`),
-						description: `${days.description}`,
-						sunrise: `${days.sunrise}`,
-						sunset: `${days.sunset}`,
-						date: `${days.datetime}`
-					};
-					await client.hSet(`${normalizeCity}`, daysDetails);
+					createCityInTheDb(normalizeCity, data);
 					res.status(201).json({ data });
 				} else {
 					res.status(500).json({
