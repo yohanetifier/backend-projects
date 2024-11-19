@@ -9,4 +9,7 @@ export class UserService {
   getUser() {
     return this.userRepository.getUser();
   }
+  createUser() {
+    return this.userRepository.createUser();
+  }
 }
