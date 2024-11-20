@@ -7,8 +7,7 @@ export class AppController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  createUser(): any {
-    // console.log('user', user);
-    return this.userService.createUser();
+  createUser(@Body() user: User): any {
+    return this.userService.createUser(user);
   }
 }
