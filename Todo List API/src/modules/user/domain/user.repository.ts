@@ -1,6 +1,7 @@
-import { User } from './user.entity';
+import { CreateUserDTo } from '../dto/create-user.dto';
+import { GetUserDTO } from '../dto/get-user.dto';
 
 export interface UserRepository {
-  getUser(): string;
-  createUser(user: User): Promise<any>;
+  getUser(user: GetUserDTO): Promise<any>;
+  createUser(user: CreateUserDTo): Promise<any>;
 }
