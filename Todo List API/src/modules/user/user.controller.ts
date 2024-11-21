@@ -11,8 +11,8 @@ export class AppController {
   createUser(@Body() user: CreateUserDTo): any {
     return this.userService.createUser(user);
   }
-  @Post('login')
-  getUser(@Body() user: GetUserDTO) {
-    return this.userService.getUser(user);
-  }
+  // @Post('')
+  // getUser(@Body() user: GetUserDTO) {
+  //   return this.userService.getUser(user);
+  // }
 }

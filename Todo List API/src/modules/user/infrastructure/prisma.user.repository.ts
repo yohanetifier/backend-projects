@@ -14,24 +14,30 @@ export class PrismaUserRepository implements UserRepository {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
   ) {}
-  async getUser(user: GetUserDTO): Promise<{ token: string } | any> {
-    const { email, password } = user;
-    const getUserByEmail = await this.prisma.user.findUnique({
-      where: { email },
-    });
+  async getUser(user: GetUserDTO): Promise<User | null> {
+    const { email } = user;
+    const userByEmail =
+      (await this.prisma.user.findUnique({ where: { email } })) ?? null;
 
-    const isGoodPassword = bcrypt.compareSync(
-      password,
-      getUserByEmail.password,
-    );
+    return userByEmail;
 
-    if (isGoodPassword) {
-      const PAYLOAD = { sub: getUserByEmail.id, name: getUserByEmail.name };
-      const ACCESS_TOKEN = await this.jwtService.signAsync(PAYLOAD);
-      return { token: ACCESS_TOKEN };
-    } else {
-      throw new Error('Wrong password');
-    }
+    // const { email, password } = user;
+    // const getUserByEmail = await this.prisma.user.findUnique({
+    //   where: { email },
+    // });
+
+    // const isGoodPassword = bcrypt.compareSync(
+    //   password,
+    //   getUserByEmail.password,
+    // );
+
+    // if (isGoodPassword) {
+    //   const PAYLOAD = { sub: getUserByEmail.id, name: getUserByEmail.name };
+    //   const ACCESS_TOKEN = await this.jwtService.signAsync(PAYLOAD);
+    //   return { token: ACCESS_TOKEN };
+    // } else {
+    //   throw new Error('Wrong password');
+    // }
   }
 
   async createUser(
