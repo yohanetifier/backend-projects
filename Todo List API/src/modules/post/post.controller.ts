@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Header, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { PostService } from './application/post.service';
 import { CreatePostDTO } from './dto/create-post.dto';
 
