@@ -18,13 +18,12 @@ export class AuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET_KEY,
       });
       request['user'] = payload;
-      console.log('request.user', request.user);
     } catch {
       throw new UnauthorizedException();
     }
     return true;
   }
-  private extractTokenFromHeader(request: Request) {
+  private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }

@@ -1,8 +1,9 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GetUserDTO } from '../user/dto/get-user.dto';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
+import { CreateTodoDTO } from '../todo/dto/todo.dto';
 
 @Controller()
 export class AuthController {
@@ -17,7 +18,8 @@ export class AuthController {
   }
   @Post('todos')
   @UseGuards(AuthGuard)
-  createTodo() {
-    console.log('in create todo');
+  createTodo(@Request() req, @Body() todo: CreateTodoDTO) {
+    const { sub } = req.user;
+    return this.authService.createTodo(sub, todo);
   }
 }
