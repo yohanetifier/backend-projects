@@ -4,7 +4,7 @@ import { GetUserDTO } from '../user/dto/get-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
-import { CreateTodoDTO } from '../todo/dto/todo.dto';
+import { CreateTodoDTO } from '../todo/dto/create-todo.dto';
 import { TodoService } from '../todo/application/todo.service';
 import { User } from '../user/domain/user.entity';
 

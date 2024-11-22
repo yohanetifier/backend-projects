@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaTodoRepository } from '../infrastructure/prisma-todo.repository';
-import { CreateTodoDTO } from '../dto/todo.dto';
+import { CreateTodoDTO } from '../dto/create-todo.dto';
 
 @Injectable()
 export class TodoService {
