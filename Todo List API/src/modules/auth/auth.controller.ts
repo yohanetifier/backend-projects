@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -17,10 +18,12 @@ import { CreateTodoDTO } from '../todo/dto/create-todo.dto';
 import { Todo } from '../todo/domain/todo.entity';
 import { UpdateTodoDTO } from '../todo/dto/update-todo-dto';
 import { DeleteTodoDTO } from '../todo/dto/delete-todo-dto';
+import { convertStringToNumber } from '../utils/convertStringToNumber';
 
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
+
   @Post('login')
   signIn(@Body() user: GetUserDTO) {
     return this.authService.signIn(user);
@@ -38,14 +41,15 @@ export class AuthController {
 
   @Put('todos/:id')
   @UseGuards(AuthGuard)
-  updateTodo(@Param('id') id: number, @Body() todo: UpdateTodoDTO) {
-    const convertIdToNumber = Number(id);
+  updateTodo(@Param('id') id: string, @Body() todo: UpdateTodoDTO) {
+    const convertIdToNumber = convertStringToNumber(id);
     return this.authService.updateTodo(convertIdToNumber, todo);
   }
 
-  // @Delete('todos')
-  // @UseGuards(AuthGuard)
-  // deleteTodo(@Body() id: number) {
-  //   console.log('id', id);
-  // }
+  @Delete('todos/:id')
+  @UseGuards(AuthGuard)
+  deleteTodo(@Param('id') id: string) {
+    const convertIdToNumber = convertStringToNumber(id);
+    return this.authService.deleteTodo(convertIdToNumber);
+  }
 }

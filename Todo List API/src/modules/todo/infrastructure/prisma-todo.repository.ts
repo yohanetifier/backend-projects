@@ -43,7 +43,24 @@ export class PrismaTodoRepository implements TodoRepository {
     }
   }
   async deleteTodo(id: number) {
-    console.log('in delete todo Prisma');
-    return true;
+    const getTodoById = await this.prisma.todo.findUnique({
+      where: { id },
+    });
+
+    if (getTodoById) {
+      return (await this.prisma.todo.delete({ where: { id } })) ? true : false;
+    }
+  }
+
+  async getTodoById(id: Todo['id']) {
+    const getTodoById = await this.prisma.todo.findUnique({
+      where: { id },
+    });
+
+    if (getTodoById) {
+      return getTodoById;
+    } else {
+      throw new Error('No todo found');
+    }
   }
 }
