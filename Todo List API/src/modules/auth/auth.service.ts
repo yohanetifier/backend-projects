@@ -58,4 +58,7 @@ export class AuthService {
   deleteTodo(userId: Todo['userId'], id: Todo['id']) {
     return this.todoService.deleteTodo(userId, id);
   }
+  getTodo(userId, page?: number, limit?: number) {
+    return this.todoService.getTodo(userId, page, limit);
+  }
 }

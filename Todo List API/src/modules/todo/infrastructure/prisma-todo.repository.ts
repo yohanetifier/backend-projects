@@ -71,4 +71,15 @@ export class PrismaTodoRepository implements TodoRepository {
       throw new Error('No todo found');
     }
   }
+
+  async getTodo(userId: Todo['userId'], page: number, limit: number) {
+    const getTodosBy = await this.prisma.todo.findMany({
+      take: limit,
+      skip: (page - 1) * limit,
+      where: {
+        userId,
+      },
+    });
+    return getTodosBy;
+  }
 }

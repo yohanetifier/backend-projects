@@ -20,4 +20,7 @@ export class TodoService {
   deleteTodo(userId: Todo['userId'], id: Todo['id']) {
     return this.prismaTodoRepository.deleteTodo(userId, id);
   }
+  getTodo(userId: Todo['userId'], page: number, limit: number) {
+    return this.prismaTodoRepository.getTodo(userId, page, limit);
+  }
 }

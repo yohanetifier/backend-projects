@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Request,
   Res,
   UseGuards,
@@ -18,11 +19,11 @@ import { GetUserDTO } from '../user/dto/get-user.dto';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
 import { CreateTodoDTO } from '../todo/dto/create-todo.dto';
-import { Todo } from '../todo/domain/todo.entity';
 import { UpdateTodoDTO } from '../todo/dto/update-todo-dto';
-import { DeleteTodoDTO } from '../todo/dto/delete-todo-dto';
 import { convertStringToNumber } from '../utils/convertStringToNumber';
 import { Response } from 'express';
+
+type Transformer<T, K extends keyof T, V> = { [P in K]: V };
 
 @Controller()
 export class AuthController {
@@ -36,6 +37,23 @@ export class AuthController {
   signUp(@Body() user: CreateUserDTO) {
     return this.authService.signUp(user);
   }
+
+  @Get('todos')
+  @UseGuards(AuthGuard)
+  paginateTodos(
+    @Query() query: Transformer<{ page; limit }, 'page' | 'limit', string>,
+    @Request() req,
+  ) {
+    const { sub } = req.user;
+    const convertPageToNumber = convertStringToNumber(query.page);
+    const convertLimitToNumber = convertStringToNumber(query.limit);
+    return this.authService.getTodo(
+      sub,
+      convertPageToNumber,
+      convertLimitToNumber,
+    );
+  }
+
   @Post('todos')
   @UseGuards(AuthGuard)
   createTodo(@Request() req, @Body() todo: CreateTodoDTO) {

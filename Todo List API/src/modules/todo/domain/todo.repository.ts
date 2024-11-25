@@ -11,4 +11,5 @@ export interface TodoRepository {
     todo: UpdateTodoDTO,
   ): Promise<Todo>;
   deleteTodo(userId: Todo['userId'], id: Todo['id']): Promise<boolean>;
+  getTodo(userId: Todo['userId'], page: number, limit: number): Promise<Todo[]>;
 }
