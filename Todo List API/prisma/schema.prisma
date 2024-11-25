@@ -23,6 +23,7 @@ model User {
 
 model Todo {
   id Int @default(autoincrement()) @id
+  todoId Int
   title String
   description String
   user User? @relation(fields: [userId], references: [id])

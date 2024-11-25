@@ -12,10 +12,17 @@ export class PrismaTodoRepository implements TodoRepository {
       throw new Error('Invalid todo');
     }
     const { description, title } = todo;
-    const response = await this.prisma.todo.create({
-      data: { userId: id, title, description },
+    const lastTask = await this.prisma.todo.findFirst({
+      orderBy: {
+        todoId: 'desc',
+      },
     });
-    console.log('response', response);
+
+    let newTodoNumber = lastTask ? lastTask.todoId + 1 : 1;
+
+    const response = await this.prisma.todo.create({
+      data: { userId: id, title, description, todoId: newTodoNumber },
+    });
     return response;
   }
 }
