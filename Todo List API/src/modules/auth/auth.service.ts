@@ -8,7 +8,7 @@ import { CreateTodoDTO } from '../todo/dto/create-todo.dto';
 import { TodoService } from '../todo/application/todo.service';
 import { User } from '../user/domain/user.entity';
 import { Todo } from '../todo/domain/todo.entity';
-import { UpdateTodoDTO } from '../todo/dto/update-todo';
+import { UpdateTodoDTO } from '../todo/dto/update-todo-dto';
 
 @Injectable()
 export class AuthService {
@@ -52,7 +52,7 @@ export class AuthService {
   createTodo(id: User['id'], todo: CreateTodoDTO) {
     return this.todoService.createTodo(id, todo);
   }
-  updateTodo(todo: UpdateTodoDTO) {
-    return this.todoService.updateTodo(todo);
+  updateTodo(id: number, todo: UpdateTodoDTO) {
+    return this.todoService.updateTodo(id, todo);
   }
 }

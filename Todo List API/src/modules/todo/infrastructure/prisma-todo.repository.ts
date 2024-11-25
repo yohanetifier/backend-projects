@@ -4,7 +4,8 @@ import { CreateTodoDTO } from '../dto/create-todo.dto';
 import { User } from 'src/modules/user/domain/user.entity';
 import { Injectable } from '@nestjs/common';
 import { Todo } from '../domain/todo.entity';
-import { UpdateTodoDTO } from '../dto/update-todo';
+import { UpdateTodoDTO } from '../dto/update-todo-dto';
+import { DeleteTodoDTO } from '../dto/delete-todo-dto';
 
 @Injectable()
 export class PrismaTodoRepository implements TodoRepository {
@@ -27,18 +28,22 @@ export class PrismaTodoRepository implements TodoRepository {
     });
     return response;
   }
-  async updateTodo(todo: UpdateTodoDTO): Promise<any> {
+  async updateTodo(id: number, todo: UpdateTodoDTO): Promise<any> {
     const getTodoById = await this.prisma.todo.findUnique({
-      where: { id: todo.id },
+      where: { id },
     });
 
     if (getTodoById) {
       return this.prisma.todo.update({
-        where: { id: todo.id },
+        where: { id },
         data: { title: todo.title, description: todo.description },
       });
     } else {
       throw new Error('No todo for this id');
     }
+  }
+  async deleteTodo(id: number) {
+    console.log('in delete todo Prisma');
+    return true;
   }
 }

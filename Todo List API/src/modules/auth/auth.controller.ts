@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
+  Param,
   Patch,
   Post,
+  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -12,7 +15,8 @@ import { CreateUserDTO } from '../user/dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
 import { CreateTodoDTO } from '../todo/dto/create-todo.dto';
 import { Todo } from '../todo/domain/todo.entity';
-import { UpdateTodoDTO } from '../todo/dto/update-todo';
+import { UpdateTodoDTO } from '../todo/dto/update-todo-dto';
+import { DeleteTodoDTO } from '../todo/dto/delete-todo-dto';
 
 @Controller()
 export class AuthController {
@@ -32,9 +36,16 @@ export class AuthController {
     return this.authService.createTodo(sub, todo);
   }
 
-  @Patch('todos')
+  @Put('todos/:id')
   @UseGuards(AuthGuard)
-  updateTodo(@Body() todo: UpdateTodoDTO) {
-    return this.authService.updateTodo(todo);
+  updateTodo(@Param('id') id: number, @Body() todo: UpdateTodoDTO) {
+    const convertIdToNumber = Number(id);
+    return this.authService.updateTodo(convertIdToNumber, todo);
   }
+
+  // @Delete('todos')
+  // @UseGuards(AuthGuard)
+  // deleteTodo(@Body() id: number) {
+  //   console.log('id', id);
+  // }
 }

@@ -1,8 +1,10 @@
 import { User } from 'src/modules/user/domain/user.entity';
 import { CreateTodoDTO } from '../dto/create-todo.dto';
 import { Todo } from './todo.entity';
+import { UpdateTodoDTO } from '../dto/update-todo-dto';
 
 export interface TodoRepository {
   createTodo(id: User['id'], todo: CreateTodoDTO): Promise<Todo>;
-  updateTodo(todo: CreateTodoDTO): Promise<Todo>;
+  updateTodo(id: number, todo: UpdateTodoDTO): Promise<Todo>;
+  deleteTodo(id: Todo['id']): Promise<boolean>;
 }
