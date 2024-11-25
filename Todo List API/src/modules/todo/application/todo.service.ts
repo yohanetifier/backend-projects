@@ -17,7 +17,7 @@ export class TodoService {
   updateTodo(id: number, todo: UpdateTodoDTO) {
     return this.prismaTodoRepository.updateTodo(id, todo);
   }
-  deleteTodo(id: Todo['id']) {
-    return this.prismaTodoRepository.deleteTodo(id);
+  deleteTodo(userId: Todo['userId'], id: Todo['id']) {
+    return this.prismaTodoRepository.deleteTodo(userId, id);
   }
 }

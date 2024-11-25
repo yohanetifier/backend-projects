@@ -3,11 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
   Put,
   Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -19,6 +22,7 @@ import { Todo } from '../todo/domain/todo.entity';
 import { UpdateTodoDTO } from '../todo/dto/update-todo-dto';
 import { DeleteTodoDTO } from '../todo/dto/delete-todo-dto';
 import { convertStringToNumber } from '../utils/convertStringToNumber';
+import { Response } from 'express';
 
 @Controller()
 export class AuthController {
@@ -46,10 +50,23 @@ export class AuthController {
     return this.authService.updateTodo(convertIdToNumber, todo);
   }
 
+  @HttpCode(204)
   @Delete('todos/:id')
   @UseGuards(AuthGuard)
-  deleteTodo(@Param('id') id: string) {
+  async deleteTodo(
+    @Param('id') id: string,
+    @Request() req,
+    @Res() res: Response,
+  ) {
+    const { sub } = req.user;
     const convertIdToNumber = convertStringToNumber(id);
-    return this.authService.deleteTodo(convertIdToNumber);
+    const isDeleted = await this.authService.deleteTodo(sub, convertIdToNumber);
+    if (isDeleted) {
+      return res.status(HttpStatus.NO_CONTENT).send();
+    } else {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: 'Todo not found' });
+    }
   }
 }

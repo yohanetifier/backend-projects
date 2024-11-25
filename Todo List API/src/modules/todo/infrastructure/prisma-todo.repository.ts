@@ -42,13 +42,17 @@ export class PrismaTodoRepository implements TodoRepository {
       throw new Error('No todo for this id');
     }
   }
-  async deleteTodo(id: number) {
-    const getTodoById = await this.prisma.todo.findUnique({
-      where: { id },
+  async deleteTodo(userId: Todo['userId'], id: Todo['id']): Promise<any> {
+    const getTodoById = await this.prisma.todo.findMany({
+      where: { userId, todoId: id },
     });
 
-    if (getTodoById) {
-      return (await this.prisma.todo.delete({ where: { id } })) ? true : false;
+    if (getTodoById.length) {
+      return await this.prisma.todo.delete({
+        where: { id: getTodoById[0].id },
+      });
+    } else {
+      return false;
     }
   }
 
