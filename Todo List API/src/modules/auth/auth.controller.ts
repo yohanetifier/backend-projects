@@ -45,12 +45,16 @@ export class AuthController {
 
   @Put('todos/:id')
   @UseGuards(AuthGuard)
-  updateTodo(@Param('id') id: string, @Body() todo: UpdateTodoDTO) {
+  updateTodo(
+    @Param('id') id: string,
+    @Body() todo: UpdateTodoDTO,
+    @Request() req,
+  ) {
+    const { sub } = req.user;
     const convertIdToNumber = convertStringToNumber(id);
-    return this.authService.updateTodo(convertIdToNumber, todo);
+    return this.authService.updateTodo(sub, convertIdToNumber, todo);
   }
 
-  @HttpCode(204)
   @Delete('todos/:id')
   @UseGuards(AuthGuard)
   async deleteTodo(

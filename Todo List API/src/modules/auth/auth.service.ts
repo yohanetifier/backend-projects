@@ -52,8 +52,8 @@ export class AuthService {
   createTodo(id: User['id'], todo: CreateTodoDTO) {
     return this.todoService.createTodo(id, todo);
   }
-  updateTodo(id: number, todo: UpdateTodoDTO) {
-    return this.todoService.updateTodo(id, todo);
+  updateTodo(userId: Todo['userId'], id: Todo['id'], todo: UpdateTodoDTO) {
+    return this.todoService.updateTodo(userId, id, todo);
   }
   deleteTodo(userId: Todo['userId'], id: Todo['id']) {
     return this.todoService.deleteTodo(userId, id);

@@ -28,14 +28,18 @@ export class PrismaTodoRepository implements TodoRepository {
     });
     return response;
   }
-  async updateTodo(id: number, todo: UpdateTodoDTO): Promise<any> {
-    const getTodoById = await this.prisma.todo.findUnique({
-      where: { id },
+  async updateTodo(
+    userId: Todo['userId'],
+    id: Todo['id'],
+    todo: UpdateTodoDTO,
+  ): Promise<any> {
+    const getTodoById = await this.prisma.todo.findMany({
+      where: { userId, todoId: id },
     });
 
     if (getTodoById) {
       return this.prisma.todo.update({
-        where: { id },
+        where: { id: getTodoById[0].id },
         data: { title: todo.title, description: todo.description },
       });
     } else {

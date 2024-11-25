@@ -5,6 +5,10 @@ import { UpdateTodoDTO } from '../dto/update-todo-dto';
 
 export interface TodoRepository {
   createTodo(id: User['id'], todo: CreateTodoDTO): Promise<Todo>;
-  updateTodo(id: number, todo: UpdateTodoDTO): Promise<Todo>;
+  updateTodo(
+    userId: Todo['userId'],
+    id: number,
+    todo: UpdateTodoDTO,
+  ): Promise<Todo>;
   deleteTodo(userId: Todo['userId'], id: Todo['id']): Promise<boolean>;
 }
