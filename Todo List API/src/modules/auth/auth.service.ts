@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/application/user.service';
 import { GetUserDTO } from '../user/dto/get-user.dto';
 import * as bcrypt from 'bcryptjs';
@@ -29,25 +33,26 @@ export class AuthService {
       if (isGoodPassword) {
         return await this.generateToken(user.id, user.name);
       } else {
-        throw new Error('Wrong password');
+        throw new BadRequestException('Wrong password');
       }
     } else {
-      throw new Error('Not user in the DB for this email ');
+      throw new BadRequestException('Not user in the DB for this email ');
     }
   }
 
   async signUp(credentials: CreateUserDTO) {
-    const user = await this.userService.createUser(credentials);
-    if (user) {
+    try {
+      const user = await this.userService.createUser(credentials);
       return this.generateToken(user.id, user.name);
-    } else {
-      throw new Error('User already exist');
+    } catch {
+      throw new BadRequestException('User already exist');
     }
   }
+
   async generateToken(id: number, name: string) {
     const PAYLOAD = { sub: id, name };
     const accessToken = await this.jwtService.signAsync(PAYLOAD, {
-      expiresIn: '15m',
+      expiresIn: '1h',
     });
     const refreshToken = await this.jwtService.signAsync(PAYLOAD, {
       expiresIn: '7d',
@@ -62,9 +67,13 @@ export class AuthService {
         ignoreExpiration: false,
       });
 
-      const newAccessToken = this.jwtService.signAsync(payload, {
-        expiresIn: '15m',
-      });
+      const newAccessToken = await this.jwtService.signAsync(
+        { sub: payload.sub, name: payload.name },
+        {
+          expiresIn: '15m',
+        },
+      );
+
       return { accessToken: newAccessToken };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
