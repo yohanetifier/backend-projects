@@ -3,10 +3,8 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   HttpStatus,
   Param,
-  Patch,
   Post,
   Put,
   Query,
@@ -90,5 +88,9 @@ export class AuthController {
         .status(HttpStatus.NOT_FOUND)
         .json({ message: 'Todo not found' });
     }
+  }
+  @Post('refresh-token')
+  refreshToken(@Body('refreshToken') refreshToken: string) {
+    return this.authService.refreshToken(refreshToken);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/application/user.service';
 import { GetUserDTO } from '../user/dto/get-user.dto';
 import * as bcrypt from 'bcryptjs';
@@ -46,8 +46,29 @@ export class AuthService {
   }
   async generateToken(id: number, name: string) {
     const PAYLOAD = { sub: id, name };
-    const ACCESS_TOKEN = await this.jwtService.signAsync(PAYLOAD);
-    return { token: ACCESS_TOKEN };
+    const accessToken = await this.jwtService.signAsync(PAYLOAD, {
+      expiresIn: '15m',
+    });
+    const refreshToken = await this.jwtService.signAsync(PAYLOAD, {
+      expiresIn: '7d',
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        ignoreExpiration: false,
+      });
+
+      const newAccessToken = this.jwtService.signAsync(payload, {
+        expiresIn: '15m',
+      });
+      return { accessToken: newAccessToken };
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
   createTodo(id: User['id'], todo: CreateTodoDTO) {
     return this.todoService.createTodo(id, todo);
@@ -58,7 +79,7 @@ export class AuthService {
   deleteTodo(userId: Todo['userId'], id: Todo['id']) {
     return this.todoService.deleteTodo(userId, id);
   }
-  getTodo(userId, page?: number, limit?: number) {
+  getTodo(userId: Todo['userId'], page?: number, limit?: number) {
     return this.todoService.getTodo(userId, page, limit);
   }
 }
