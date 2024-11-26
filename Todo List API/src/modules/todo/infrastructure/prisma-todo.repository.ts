@@ -2,7 +2,7 @@ import { PrismaService } from 'src/prisma.service';
 import { TodoRepository } from '../domain/todo.repository';
 import { CreateTodoDTO } from '../dto/create-todo.dto';
 import { User } from 'src/modules/user/domain/user.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from '../domain/todo.entity';
 import { UpdateTodoDTO } from '../dto/update-todo-dto';
 import { DeleteTodoDTO } from '../dto/delete-todo-dto';
@@ -43,7 +43,7 @@ export class PrismaTodoRepository implements TodoRepository {
         data: { title: todo.title, description: todo.description },
       });
     } else {
-      throw new Error('No todo for this id');
+      throw new NotFoundException('No todo for this id');
     }
   }
   async deleteTodo(userId: Todo['userId'], id: Todo['id']): Promise<any> {
@@ -68,7 +68,7 @@ export class PrismaTodoRepository implements TodoRepository {
     if (getTodoById) {
       return getTodoById;
     } else {
-      throw new Error('No todo found');
+      throw new NotFoundException('No todo found');
     }
   }
 
