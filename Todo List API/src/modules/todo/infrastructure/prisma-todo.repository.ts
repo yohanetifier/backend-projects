@@ -1,4 +1,4 @@
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../../../prisma.service';
 import { TodoRepository } from '../domain/todo.repository';
 import { CreateTodoDTO } from '../dto/create-todo.dto';
 import { User } from 'src/modules/user/domain/user.entity';

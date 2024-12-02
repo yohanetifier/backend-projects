@@ -23,7 +23,8 @@ export class AuthService {
   ) {}
   async signIn(credentials: GetUserDTO): Promise<any> {
     const user = await this.userService.getUser(credentials);
-
+    console.log('credentials', credentials);
+    console.log('user', user);
     if (user) {
       const isGoodPassword = bcrypt.compareSync(
         credentials.password,
