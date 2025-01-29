@@ -35,12 +35,22 @@ describe('AppController', () => {
 
   describe('getUsers', () => {
     it('should return an array of  user', async () => {
-      const userData: GetUserDTO = { email: 'testz@test.fr', password: 'test' };
-      jest
-        .spyOn(userService, 'getUser')
-        .mockImplementation(async () => userData);
+      const userData: GetUserDTO = {
+        email: 'test@test.fr',
+        password: 'Eti&300508',
+      };
+      const result: User = {
+        id: 63636,
+        email: userData.email,
+        password: userData.password,
+        name: 'test',
+      };
+      jest.spyOn(userService, 'getUser').mockImplementation(async () => result);
 
-      expect(await authController.signIn(userData)).toBe(userData);
+      expect(await authController.signIn(result)).toBe({
+        accessToken: '',
+        refreshToken: '',
+      });
     });
   });
 });

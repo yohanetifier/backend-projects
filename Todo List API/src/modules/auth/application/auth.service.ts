@@ -3,19 +3,20 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from '../user/application/user.service';
-import { GetUserDTO } from '../user/dto/get-user.dto';
+import { UserService } from '../../user/application/user.service';
+import { GetUserDTO } from '../../user/dto/get-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDTO } from '../user/dto/create-user.dto';
-import { CreateTodoDTO } from '../todo/dto/create-todo.dto';
-import { TodoService } from '../todo/application/todo.service';
-import { User } from '../user/domain/user.entity';
-import { Todo } from '../todo/domain/todo.entity';
-import { UpdateTodoDTO } from '../todo/dto/update-todo-dto';
+import { CreateUserDTO } from '../../user/dto/create-user.dto';
+import { CreateTodoDTO } from '../../todo/dto/create-todo.dto';
+import { TodoService } from '../../todo/application/todo.service';
+import { User } from '../../user/domain/user.entity';
+import { Todo } from '../../todo/domain/todo.entity';
+import { UpdateTodoDTO } from '../../todo/dto/update-todo-dto';
+import { AuthRepository } from '../domain/auth.domain';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements AuthRepository {
   constructor(
     private userService: UserService,
     private todoService: TodoService,
@@ -23,8 +24,6 @@ export class AuthService {
   ) {}
   async signIn(credentials: GetUserDTO): Promise<any> {
     const user = await this.userService.getUser(credentials);
-    console.log('credentials', credentials);
-    console.log('user', user);
     if (user) {
       const isGoodPassword = bcrypt.compareSync(
         credentials.password,
