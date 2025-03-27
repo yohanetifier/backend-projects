@@ -50,11 +50,11 @@ export class AuthService implements AuthRepository {
   }
 
   async generateToken(id: number, name: string) {
-    const PAYLOAD = { sub: id, name };
-    const accessToken = await this.jwtService.signAsync(PAYLOAD, {
+    const payload = { sub: id, name };
+    const accessToken = await this.jwtService.signAsync(payload, {
       expiresIn: '1h',
     });
-    const refreshToken = await this.jwtService.signAsync(PAYLOAD, {
+    const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: '7d',
     });
 
@@ -65,6 +65,7 @@ export class AuthService implements AuthRepository {
     try {
       const payload = this.jwtService.verify(refreshToken, {
         ignoreExpiration: false,
+        secret: process.env.JWT_SECRET_KEY,
       });
 
       const newAccessToken = await this.jwtService.signAsync(
