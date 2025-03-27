@@ -4,10 +4,13 @@ WORKDIR /api
 
 COPY package.json ./
 
-RUN yarn
+RUN yarn 
 
 COPY . .
 
+RUN yarn global add prisma 
+
 EXPOSE 3000
+
 
 CMD ["yarn", "start:dev" ]

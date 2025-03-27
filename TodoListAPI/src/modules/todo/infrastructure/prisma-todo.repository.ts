@@ -5,7 +5,6 @@ import { User } from 'src/modules/user/domain/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from '../domain/todo.entity';
 import { UpdateTodoDTO } from '../dto/update-todo-dto';
-import { DeleteTodoDTO } from '../dto/delete-todo-dto';
 
 @Injectable()
 export class PrismaTodoRepository implements TodoRepository {
@@ -21,7 +20,7 @@ export class PrismaTodoRepository implements TodoRepository {
       },
     });
 
-    let newTodoNumber = lastTask ? lastTask.todoId + 1 : 1;
+    const newTodoNumber = lastTask ? lastTask.todoId + 1 : 1;
 
     const response = await this.prisma.todo.create({
       data: { userId: id, title, description, todoId: newTodoNumber },

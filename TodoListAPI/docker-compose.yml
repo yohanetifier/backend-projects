@@ -20,6 +20,8 @@ services:
       - 5000:3000
     environment:
       - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - ./:/api
 
   adminer:
     container_name: TodoList.Adminer
