@@ -29,68 +29,69 @@ export class AuthController {
 
   @Post('login')
   signIn(@Body() user: GetUserDTO) {
+    // console.log('user', user);
     return this.authService.signIn(user);
   }
-  @Post('register')
-  signUp(@Body() user: CreateUserDTO) {
-    return this.authService.signUp(user);
-  }
+  // @Post('register')
+  // signUp(@Body() user: CreateUserDTO) {
+  //   return this.authService.signUp(user);
+  // }
 
-  @Get('todos')
-  @UseGuards(AuthGuard)
-  paginateTodos(
-    @Query() query: Transformer<{ page; limit }, 'page' | 'limit', string>,
-    @Request() req,
-  ) {
-    const { sub } = req.user;
-    const convertPageToNumber = convertStringToNumber(query.page);
-    const convertLimitToNumber = convertStringToNumber(query.limit);
-    return this.authService.getTodo(
-      sub,
-      convertPageToNumber,
-      convertLimitToNumber,
-    );
-  }
+  // @Get('todos')
+  // @UseGuards(AuthGuard)
+  // paginateTodos(
+  //   @Query() query: Transformer<{ page; limit }, 'page' | 'limit', string>,
+  //   @Request() req,
+  // ) {
+  //   const { sub } = req.user;
+  //   const convertPageToNumber = convertStringToNumber(query.page);
+  //   const convertLimitToNumber = convertStringToNumber(query.limit);
+  //   return this.authService.getTodo(
+  //     sub,
+  //     convertPageToNumber,
+  //     convertLimitToNumber,
+  //   );
+  // }
 
-  @Post('todos')
-  @UseGuards(AuthGuard)
-  createTodo(@Request() req, @Body() todo: CreateTodoDTO) {
-    const { sub } = req.user;
-    return this.authService.createTodo(sub, todo);
-  }
+  // @Post('todos')
+  // @UseGuards(AuthGuard)
+  // createTodo(@Request() req, @Body() todo: CreateTodoDTO) {
+  //   const { sub } = req.user;
+  //   return this.authService.createTodo(sub, todo);
+  // }
 
-  @Put('todos/:id')
-  @UseGuards(AuthGuard)
-  updateTodo(
-    @Param('id') id: string,
-    @Body() todo: UpdateTodoDTO,
-    @Request() req,
-  ) {
-    const { sub } = req.user;
-    const convertIdToNumber = convertStringToNumber(id);
-    return this.authService.updateTodo(sub, convertIdToNumber, todo);
-  }
+  // @Put('todos/:id')
+  // @UseGuards(AuthGuard)
+  // updateTodo(
+  //   @Param('id') id: string,
+  //   @Body() todo: UpdateTodoDTO,
+  //   @Request() req,
+  // ) {
+  //   const { sub } = req.user;
+  //   const convertIdToNumber = convertStringToNumber(id);
+  //   return this.authService.updateTodo(sub, convertIdToNumber, todo);
+  // }
 
-  @Delete('todos/:id')
-  @UseGuards(AuthGuard)
-  async deleteTodo(
-    @Param('id') id: string,
-    @Request() req,
-    @Res() res: Response,
-  ) {
-    const { sub } = req.user;
-    const convertIdToNumber = convertStringToNumber(id);
-    const isDeleted = await this.authService.deleteTodo(sub, convertIdToNumber);
-    if (isDeleted) {
-      return res.status(HttpStatus.NO_CONTENT).send();
-    } else {
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: 'Todo not found' });
-    }
-  }
-  @Post('refresh-token')
-  refreshToken(@Body('refreshToken') refreshToken: string) {
-    return this.authService.refreshToken(refreshToken);
-  }
+  // @Delete('todos/:id')
+  // @UseGuards(AuthGuard)
+  // async deleteTodo(
+  //   @Param('id') id: string,
+  //   @Request() req,
+  //   @Res() res: Response,
+  // ) {
+  //   const { sub } = req.user;
+  //   const convertIdToNumber = convertStringToNumber(id);
+  //   const isDeleted = await this.authService.deleteTodo(sub, convertIdToNumber);
+  //   if (isDeleted) {
+  //     return res.status(HttpStatus.NO_CONTENT).send();
+  //   } else {
+  //     return res
+  //       .status(HttpStatus.NOT_FOUND)
+  //       .json({ message: 'Todo not found' });
+  //   }
+  // }
+  // @Post('refresh-token')
+  // refreshToken(@Body('refreshToken') refreshToken: string) {
+  //   return this.authService.refreshToken(refreshToken);
+  // }
 }
