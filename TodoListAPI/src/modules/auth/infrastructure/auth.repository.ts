@@ -23,22 +23,21 @@ export class JwtAuthRepository implements AuthRepository {
     private jwtService: JwtService,
   ) {}
   async signIn(credentials: GetUserDTO): Promise<any> {
-    console.log('jirgjhioerj', credentials);
-    // const user = await this.userService.getUser(credentials);
-    // if (user) {
-    //   const isGoodPassword = bcrypt.compareSync(
-    //     credentials.password,
-    //     user.password,
-    //   );
+    const user = await this.userService.getUser(credentials);
+    if (user) {
+      const isGoodPassword = bcrypt.compareSync(
+        credentials.password,
+        user.password,
+      );
 
-    //   if (isGoodPassword) {
-    //     return await this.generateToken(user.id, user.name);
-    //   } else {
-    //     throw new BadRequestException('Wrong password');
-    //   }
-    // } else {
-    //   throw new BadRequestException('Not user in the DB for this email ');
-    // }
+      if (isGoodPassword) {
+        return await this.generateToken(user.id, user.name);
+      } else {
+        throw new BadRequestException('Wrong password');
+      }
+    } else {
+      throw new BadRequestException('Not user in the DB for this email ');
+    }
   }
 
   async signUp(credentials: CreateUserDTO) {
