@@ -32,10 +32,10 @@ export class AuthController {
     // console.log('user', user);
     return this.authService.signIn(user);
   }
-  // @Post('register')
-  // signUp(@Body() user: CreateUserDTO) {
-  //   return this.authService.signUp(user);
-  // }
+  @Post('register')
+  signUp(@Body() user: CreateUserDTO) {
+    return this.authService.signUp(user);
+  }
 
   // @Get('todos')
   // @UseGuards(AuthGuard)

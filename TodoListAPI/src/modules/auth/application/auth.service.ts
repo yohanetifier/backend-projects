@@ -1,7 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 // import { UserService } from '../../user/application/user.service';
 import { GetUserDTO } from '../../user/dto/get-user.dto';
 import { JwtAuthRepository } from '../infrastructure/auth.repository';
+import { CreateUserDTO } from 'src/modules/user/dto/create-user.dto';
+import { UserService } from 'src/modules/user/application/user.service';
+import { JwtService } from '@nestjs/jwt';
 // import * as bcrypt from 'bcryptjs';
 // import { JwtService } from '@nestjs/jwt';
 // import { CreateUserDTO } from '../../user/dto/create-user.dto';
@@ -15,9 +23,9 @@ import { JwtAuthRepository } from '../infrastructure/auth.repository';
 @Injectable()
 export class AuthService {
   constructor(
-    // private userService: UserService,
+    private userService: UserService,
     // private todoService: TodoService,
-    // private jwtService: JwtService,
+    private jwtService: JwtService,
     @Inject('JwtAuthRepository')
     private authRepository: JwtAuthRepository,
   ) {}
@@ -40,26 +48,26 @@ export class AuthService {
     // }
   }
 
-  // async signUp(credentials: CreateUserDTO) {
-  //   try {
-  //     const user = await this.userService.createUser(credentials);
-  //     return this.generateToken(user.id, user.name);
-  //   } catch {
-  //     throw new BadRequestException('User already exist');
-  //   }
-  // }
+  async signUp(credentials: CreateUserDTO) {
+    try {
+      const user = await this.userService.createUser(credentials);
+      return this.generateToken(user.id, user.name);
+    } catch {
+      throw new BadRequestException('User already exist');
+    }
+  }
 
-  // async generateToken(id: number, name: string) {
-  //   const payload = { sub: id, name };
-  //   const accessToken = await this.jwtService.signAsync(payload, {
-  //     expiresIn: '1h',
-  //   });
-  //   const refreshToken = await this.jwtService.signAsync(payload, {
-  //     expiresIn: '7d',
-  //   });
+  async generateToken(id: number, name: string) {
+    const payload = { sub: id, name };
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '1h',
+    });
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
 
-  //   return { accessToken, refreshToken };
-  // }
+    return { accessToken, refreshToken };
+  }
 
   // async refreshToken(refreshToken: string) {
   //   try {
