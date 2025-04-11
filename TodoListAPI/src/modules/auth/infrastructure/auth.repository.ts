@@ -19,7 +19,7 @@ import { AuthRepository } from '../domain/auth.domain';
 export class JwtAuthRepository implements AuthRepository {
   constructor(
     private userService: UserService,
-    private todoService: TodoService,
+    // private todoService: TodoService,
     private jwtService: JwtService,
   ) {}
   async signIn(credentials: GetUserDTO): Promise<any> {
@@ -80,16 +80,4 @@ export class JwtAuthRepository implements AuthRepository {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
-  //   createTodo(id: User['id'], todo: CreateTodoDTO) {
-  //     return this.todoService.createTodo(id, todo);
-  //   }
-  //   updateTodo(userId: Todo['userId'], id: Todo['id'], todo: UpdateTodoDTO) {
-  //     return this.todoService.updateTodo(userId, id, todo);
-  //   }
-  //   deleteTodo(userId: Todo['userId'], id: Todo['id']) {
-  //     return this.todoService.deleteTodo(userId, id);
-  //   }
-  //   getTodo(userId: Todo['userId'], page?: number, limit?: number) {
-  //     return this.todoService.getTodo(userId, page, limit);
-  //   }
 }
