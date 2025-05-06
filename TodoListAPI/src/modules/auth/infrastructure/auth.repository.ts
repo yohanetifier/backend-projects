@@ -8,11 +8,6 @@ import { GetUserDTO } from '../../user/dto/get-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDTO } from '../../user/dto/create-user.dto';
-import { CreateTodoDTO } from '../../todo/dto/create-todo.dto';
-import { TodoService } from '../../todo/application/todo.service';
-import { User } from '../../user/domain/user.entity';
-import { Todo } from '../../todo/domain/todo.entity';
-import { UpdateTodoDTO } from '../../todo/dto/update-todo-dto';
 import { AuthRepository } from '../domain/auth.domain';
 
 @Injectable()

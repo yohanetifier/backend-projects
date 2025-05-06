@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaTodoRepository } from '../infrastructure/prisma-todo.repository';
 import { CreateTodoDTO } from '../dto/create-todo.dto';
 import { UpdateTodoDTO } from '../dto/update-todo-dto';
@@ -7,10 +7,7 @@ import { Todo } from '../domain/todo.entity';
 
 @Injectable()
 export class TodoService {
-  constructor(
-    @Inject('PrismaTodoRepository')
-    private readonly prismaTodoRepository: PrismaTodoRepository,
-  ) {}
+  constructor(private readonly prismaTodoRepository: PrismaTodoRepository) {}
   createTodo(id: number, todo: CreateTodoDTO) {
     return this.prismaTodoRepository.createTodo(id, todo);
   }

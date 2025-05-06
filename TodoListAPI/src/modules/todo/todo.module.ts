@@ -12,14 +12,7 @@ import { AuthModule } from '../auth/auth.module';
     }),
     AuthModule,
   ],
-  providers: [
-    TodoService,
-    PrismaService,
-    {
-      provide: 'PrismaTodoRepository',
-      useClass: PrismaTodoRepository,
-    },
-  ],
+  providers: [TodoService, PrismaService, PrismaTodoRepository],
   controllers: [TodoController],
   exports: [TodoService],
 })
