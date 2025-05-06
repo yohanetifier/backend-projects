@@ -1,25 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Query,
-  Request,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './application/auth.service';
 import { GetUserDTO } from '../user/dto/get-user.dto';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
-import { AuthGuard } from './auth.guard';
-import { CreateTodoDTO } from '../todo/dto/create-todo.dto';
-import { UpdateTodoDTO } from '../todo/dto/update-todo-dto';
-import { convertStringToNumber } from '../utils/convertStringToNumber';
-import { Response } from 'express';
 
 type Transformer<T, K extends keyof T, V> = { [P in K]: V };
 

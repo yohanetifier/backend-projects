@@ -4,7 +4,7 @@ WORKDIR /api
 
 COPY package.json ./
 
-RUN yarn 
+RUN yarn global add @nestjs/cli prisma && yarn 
 
 COPY . .
 
