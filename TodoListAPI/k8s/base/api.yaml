@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: api-deployment
   labels:
     name: api
     tier: backend
@@ -15,7 +16,8 @@ spec:
         name: api
     spec:
       containers:
-        - name: TodoList.API
+        - name: todolist-api
           image: todolist/api
+          imagePullPolicy: Never
           ports:
             - containerPort: 5001
