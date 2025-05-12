@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaTodoRepository } from '../infrastructure/prisma-todo.repository';
 import { CreateTodoDTO } from '../dto/create-todo.dto';
 import { UpdateTodoDTO } from '../dto/update-todo-dto';
-// import { DeleteTodoDTO } from '../dto/delete-todo-dto';
 import { Todo } from '../domain/todo.entity';
 
 @Injectable()
