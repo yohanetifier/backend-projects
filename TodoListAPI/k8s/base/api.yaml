@@ -9,11 +9,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      name: api
+      tier: backend
   template:
     metadata:
       labels:
-        name: api
+        tier: backend
     spec:
       containers:
         - name: todolist-api
@@ -21,6 +21,18 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 5001
+          livenessProbe:
+            httpGet:
+              path: /monitoring/health
+              port: 5001
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /monitoring/health
+              port: 5001
+            initialDelaySeconds: 20
+            periodSeconds: 10
           env:
             - name: DATABASE_URL
               valueFrom:
