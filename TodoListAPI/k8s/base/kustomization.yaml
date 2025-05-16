@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - api/api.yaml
+  - api/api-service.yaml
+  - database/db-service.yaml
+  - database/db-storageclass.yaml
+  - database/db.yaml
+  - database/pvc.yaml
+
+secretGenerator:
+  - name: api-secret
+    files:
+      - api/api-secret.yaml
+  - name: db-secret
+    files:
+      - database/db-secret.yaml
+
+commonLabels:
+  app: todolist
+  environment: base
+
+commonAnnotations:
+  description: 'TodoList API base configuration'

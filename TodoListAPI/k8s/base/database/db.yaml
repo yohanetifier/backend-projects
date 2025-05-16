@@ -30,9 +30,9 @@ spec:
                   name: db-secret
                   key: POSTGRES_USER
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgres
+            - name: postgres
+              mountPath: /var/lib/postgresql/data
       volumes:
         - name: postgres
-          persistentVolumClaim:
-            claimName: my-local-pvc
+          persistentVolumeClaimName:
+            claimName: db-pv-claim
