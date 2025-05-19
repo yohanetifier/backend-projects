@@ -5,9 +5,9 @@ resources:
   - api/api.yaml
   - api/api-service.yaml
   - database/db-service.yaml
-  - database/db-storageclass.yaml
   - database/db.yaml
-  - database/pvc.yaml
+  - database/db-pvc.yaml
+  - database/db-pv.yaml
 
 secretGenerator:
   - name: api-secret
