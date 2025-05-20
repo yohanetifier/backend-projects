@@ -8,10 +8,14 @@ spec:
   selector:
     matchLabels:
       db: postgres
+      app: todolist
+      environment: base
   template:
     metadata:
       labels:
         db: postgres
+        app: todolist
+        environment: base
     spec:
       containers:
         - name: todolist-db

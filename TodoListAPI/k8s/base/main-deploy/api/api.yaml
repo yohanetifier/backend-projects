@@ -10,11 +10,26 @@ spec:
   selector:
     matchLabels:
       tier: backend
+      app: todolist
+      environment: base
   template:
     metadata:
       labels:
         tier: backend
+        app: todolist
+        environment: base
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z postgres 5432; do
+              echo "Waiting for PostgreSQL..."
+              sleep 2
+              done
       containers:
         - name: todolist-api
           image: todolist/api

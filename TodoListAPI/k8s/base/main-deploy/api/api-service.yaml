@@ -5,6 +5,8 @@ metadata:
 spec:
   selector:
     tier: backend
+    app: todolist
+    environment: base
   ports:
     - port: 5001
       protocol: TCP

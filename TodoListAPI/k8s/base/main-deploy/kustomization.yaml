@@ -9,14 +9,6 @@ resources:
   - database/db-pvc.yaml
   - database/db-pv.yaml
 
-secretGenerator:
-  - name: api-secret
-    files:
-      - api/api-secret.yaml
-  - name: db-secret
-    files:
-      - database/db-secret.yaml
-
 commonLabels:
   app: todolist
   environment: base

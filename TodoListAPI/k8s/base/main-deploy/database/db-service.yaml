@@ -6,6 +6,8 @@ spec:
   clusterIP: None
   selector:
     db: postgres
+    app: todolist
+    environment: base
   ports:
     - protocol: TCP
       port: 5432
