@@ -8,6 +8,8 @@ resources:
   - database/db.yaml
   - database/db-pvc.yaml
   - database/db-pv.yaml
+  - database-ui/adminer-deployment.yaml
+  - database-ui/adminer-service.yaml
 
 commonLabels:
   app: todolist

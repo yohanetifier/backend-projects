@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer-deployment
+  labels:
+    app: todolist
+    component: database-ui
+    environment: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todolist
+      component: database-ui
+      environment: base
+  template:
+    metadata:
+      labels:
+        app: todolist
+        component: database-ui
+        environment: base
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z postgres 5432; do
+              echo " Waiting for PostgreSQL..."
+              sleep 2
+              done
+      containers:
+        - name: todolist-adminer
+          image: adminer
+          ports:
+            - containerPort: 8080
