@@ -4,6 +4,7 @@ metadata:
   name: database-ui-svc
   labels:
     app: todolist
+    component: database-ui
     environment: base
 spec:
   type: NodePort

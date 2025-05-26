@@ -10,6 +10,7 @@ resources:
   - database/db-pv.yaml
   - database-ui/adminer-deployment.yaml
   - database-ui/adminer-service.yaml
+  - database-ui/nginx-ingress.yaml
 
 commonLabels:
   app: todolist
